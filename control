@@ -1,0 +1,9 @@
+Package: com.fiore.calculatorconverter
+Name: CalculatorConverter
+Version: 0.0.1
+Architecture: iphoneos-arm
+Description: An awesome MobileSubstrate tweak!
+Maintainer: fiore
+Author: fiore
+Section: Tweaks
+Depends: mobilesubstrate (>= 0.9.5000)
