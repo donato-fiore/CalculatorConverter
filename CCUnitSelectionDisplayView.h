@@ -6,6 +6,6 @@
     NSNumber *_value;
 }
 
-- (void)updateDisplayValue:(NSString *)value;
+- (void)updateDisplayValue:(NSNumber *)value;
 
 @end

@@ -15,14 +15,8 @@
 
 - (void)setActiveInputValue:(NSNumber *)value {
     // For testing, write to both input and result display views
-
-
-    NSNumberFormatter *formatter = [NSNumberFormatter new];
-    formatter.numberStyle = NSNumberFormatterDecimalStyle;
-
-    NSString *formattedInputValue = [formatter stringFromNumber:value];
-    [_inputUnitSelectionDisplayView updateDisplayValue:formattedInputValue];
-    [_resultUnitSelectionDisplayView updateDisplayValue:formattedInputValue];
+    [_inputUnitSelectionDisplayView updateDisplayValue:value];
+    [_resultUnitSelectionDisplayView updateDisplayValue:value];
 }
 
 - (void)_setupSubviews {

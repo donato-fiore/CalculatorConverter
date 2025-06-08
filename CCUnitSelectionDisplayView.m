@@ -12,10 +12,13 @@
     return self;
 }
 
-- (void)updateDisplayValue:(NSString *)value {
-    //TODO: Get NSNumber
+- (void)updateDisplayValue:(NSNumber *)value {
+    _value = value;
+    NSNumberFormatter *formatter = [NSNumberFormatter new];
+    formatter.numberStyle = NSNumberFormatterDecimalStyle;
 
-    _displayLabel.text = value;
+    NSString *formattedInputValue = [formatter stringFromNumber:value];
+    _displayLabel.text = formattedInputValue;
 }
 
 - (void)_setupSubviews {
