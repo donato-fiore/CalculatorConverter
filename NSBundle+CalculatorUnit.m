@@ -7,14 +7,18 @@
                                    value:(NSString *)value
                                    table:(NSString *)tableName {
 
-    if ([[self localizedStringForKey:key value:@"." table:tableName] length] == 1) {
-        NSBundle *fallbackBundle = [NSBundle bundleWithPath:ROOT_PATH_NS(@"/Library/Tweak Support/CalculateUnits")];
-        // NSLog(@"[NSBundle+CalculatorUnit] Fallback to bundle: %@", fallbackBundle.bundlePath);
+    static NSBundle *fallbackBundle = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        fallbackBundle = [NSBundle bundleWithPath:ROOT_PATH_NS(@"/Library/Tweak Support/CalculateUnits.bundle")];
+    });
+
+    NSString *localizedString = [self localizedStringForKey:key value:@"." table:tableName];
+    
+    if ([localizedString length] == 1) {
         return [fallbackBundle localizedStringForKey:key value:value table:tableName];
     }
-    NSString *localizedString = [self localizedStringForKey:key value:@"." table:tableName];
-    NSLog(@"[NSBundle+CalculatorUnit] Localized string for key '%@': %@", key, localizedString);
-
+    
     return localizedString;
 }
 

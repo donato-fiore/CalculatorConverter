@@ -22,7 +22,7 @@
             _displayName = [locale displayNameForKey:NSLocaleCurrencyCode value:_name];
         } else {
             NSString *title = [_name stringByAppendingString:@" (Title)"];
-            _displayName = [[NSBundle mainBundle] calc_localizedStringForKey:title value:@"Error" table:@"LocalizableUnitsOutput"];
+            _displayName = [[NSBundle mainBundle] calc_localizedStringForKey:title value:@"Error" table:@"LocalizableUnits"];
         }
     }
 
@@ -32,7 +32,7 @@
 - (NSString *)shortName {
     if (!_shortName) {
         NSString *title = [_name stringByAppendingString:@" (Short)"];
-        _shortName = [[NSBundle mainBundle] calc_localizedStringForKey:title value:@"Error" table:@"LocalizableUnitsOutput"];
+        _shortName = [[NSBundle mainBundle] calc_localizedStringForKey:title value:@"Error" table:@"LocalizableUnits"];
     }
 
     return _shortName;
