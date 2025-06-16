@@ -1,5 +1,6 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import "NSObject+SwiftIvar.h"
 
 #import "UIImage+CalculatorUnitConversion.h"
 #import "CCUnitConversionDisplayView.h"

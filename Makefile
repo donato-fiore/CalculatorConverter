@@ -7,7 +7,7 @@ include $(THEOS)/makefiles/common.mk
 
 TWEAK_NAME = CalculatorConverter
 
-CalculatorConverter_FILES = Tweak.x $(wildcard *.m)
-CalculatorConverter_CFLAGS = -fobjc-arc
+CalculatorConverter_FILES = Tweak.x $(wildcard *.m) $(wildcard CalculateUnits/*.m)
+CalculatorConverter_CFLAGS = -fobjc-arc -I$(THEOS_PROJECT_DIR)/include
 
 include $(THEOS_MAKE_PATH)/tweak.mk

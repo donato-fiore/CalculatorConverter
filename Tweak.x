@@ -55,7 +55,6 @@
 		[displayView.navigationItem setRightBarButtonItem:cancelButton animated:NO];
 
 		displayView.unitConversionDisplayView.hidden = NO;
-		
 	} else {
 		UIImage *conversionImage = [UIImage calc_systemImageNamed:@"arrow.up.arrow.down"];
 		UIBarButtonItem *conversionButton = [[UIBarButtonItem alloc] initWithImage:conversionImage style:UIBarButtonItemStylePlain target:self action:@selector(_changeUnitConversionMode)];
@@ -72,16 +71,24 @@
 
 - (void)calculatorModel:(id /* Calculator.CalculatorModel */)calculatorModel didUpdateDisplayValue:(DisplayValue *)displayValue shouldFlashDisplay:(BOOL)shouldFlashDisplay {
 	%orig;
-
-	CalculatorController *controller = (CalculatorController *)self;
-	DisplayView *displayView = controller.accessibilityDisplayController.view;
+	DisplayView* displayView = ((DisplayViewController *)[self getSwiftIvar:@"displayController"]).view;
 	NSNumber *displayValueNumber = [[NSNumberFormatter new] numberFromString:[displayValue accessibilityStringValue]];
 	[displayView.unitConversionDisplayView setActiveInputValue:displayValueNumber];
 }
 
 %end
 
+#import "CalculateUnits/CalculateUnits.h"
+
 %ctor {
 	%init(DisplayView = objc_getClass("Calculator.DisplayView"), 
 		  CalculatorController = objc_getClass("Calculator.CalculatorController"));
+
+	CalculateUnitCollection *unitCollection = [CalculateUnitCollection sharedCollection];
+	for (CalculateUnitCategory *category in unitCollection.categories) {
+		NSLog(@"[Tweak.x] Category: %@", category.name);
+		for (CalculateUnit *unit in category.units) {
+			NSLog(@"[Tweak.x] Unit: %@", unit);
+		}
+	}
 }
