@@ -1,8 +1,10 @@
 #import "CalculateUnit.h"
 #import "CalculateUnitCollection.h"
+#import "../NSBundle+CalculatorUnit.h"
 
 @implementation CalculateUnit
-@synthesize name = _name;
+@synthesize displayName = _displayName;
+@synthesize shortName = _shortName;
 
 - (instancetype)initWithName:(NSString *)name unitInfo:(NSDictionary *)unitInfo {
     self = [super init];
@@ -13,26 +15,27 @@
     return self;
 }
 
-- (NSString *)shortName {
-    if (!_shortName) {
-        NSBundle *bundle = [CalculateUnitCollection sharedCollection].calculateFrameworkBundle;
-        NSString *loc = [bundle localizedStringForKey:_name value:nil table:@"LocalizableUnits"];
-        NSLog(@"[CalculateUnit] localized string for %@: %@", _name, loc);
-        _shortName = loc;
+- (NSString *)displayName {
+    if (!_displayName) {
+        if (self.category.isCurrency) {
+            NSLocale *locale = [NSLocale currentLocale];
+            _displayName = [locale displayNameForKey:NSLocaleCurrencyCode value:_name];
+        } else {
+            NSString *title = [_name stringByAppendingString:@" (Title)"];
+            _displayName = [[NSBundle mainBundle] calc_localizedStringForKey:title value:@"Error" table:@"LocalizableUnitsOutput"];
+        }
     }
 
-    // if (!_shortName) {
-    //     _shortName = _name;
-    // }
-
-    return _shortName;
+    return _displayName;
 }
+
+
 
 - (NSString *)description {
     return [NSString stringWithFormat:@"<%@: %p, name: %@, unitID: %ld>", 
             NSStringFromClass([self class]),
             self,
-            [self shortName],
+            [self displayName],
             (long)_unitID];
 }
 

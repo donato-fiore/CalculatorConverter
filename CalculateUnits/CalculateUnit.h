@@ -3,13 +3,15 @@
 #import "CalculateUnitCategory.h"
 
 @interface CalculateUnit : NSObject {
+    NSString *_displayName;
     NSString *_shortName;
 }
 
+@property (nonatomic, strong) CalculateUnitCategory *category;
+@property (nonatomic, readonly) NSString *displayName;
 @property (nonatomic, readonly) NSString *shortName;
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, assign) NSInteger unitID;
-@property (nonatomic, strong) CalculateUnitCategory *category;
 
 - (instancetype)initWithName:(NSString *)name unitInfo:(NSDictionary *)unitInfo;
 

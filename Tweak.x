@@ -86,7 +86,7 @@
 
 	CalculateUnitCollection *unitCollection = [CalculateUnitCollection sharedCollection];
 	for (CalculateUnitCategory *category in unitCollection.categories) {
-		NSLog(@"[Tweak.x] Category: %@", category.name);
+		NSLog(@"[Tweak.x] Category: %@", category);
 		for (CalculateUnit *unit in category.units) {
 			NSLog(@"[Tweak.x] Unit: %@", unit);
 		}
