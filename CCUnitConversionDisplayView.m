@@ -14,9 +14,7 @@
 }
 
 - (void)setActiveInputValue:(NSNumber *)value {
-    // For testing, write to both input and result display views
-    [_inputUnitSelectionDisplayView updateDisplayValue:value];
-    [_resultUnitSelectionDisplayView updateDisplayValue:value];
+    [self.activeUnitDisplayView updateDisplayValue:value]; 
 }
 
 - (void)_setupSubviews {
@@ -34,10 +32,12 @@
     [self addSubview:_dividerView];
 
     _inputUnitSelectionDisplayView = [[CCUnitSelectionDisplayView alloc] init];
+    _inputUnitSelectionDisplayView.tag = 1000;
     _inputUnitSelectionDisplayView.translatesAutoresizingMaskIntoConstraints = NO;
     [self addSubview:_inputUnitSelectionDisplayView];
 
     _resultUnitSelectionDisplayView = [[CCUnitSelectionDisplayView alloc] init];
+    _resultUnitSelectionDisplayView.tag = 1001;
     _resultUnitSelectionDisplayView.translatesAutoresizingMaskIntoConstraints = NO;
     [self addSubview:_resultUnitSelectionDisplayView];
 
@@ -63,6 +63,19 @@
         [_resultUnitSelectionDisplayView.topAnchor constraintEqualToAnchor:_dividerView.bottomAnchor constant:5],
         [_resultUnitSelectionDisplayView.bottomAnchor constraintEqualToAnchor:self.bottomAnchor constant:-5],
     ]];
+
+    self.activeUnitDisplayView = _inputUnitSelectionDisplayView;
+    [self updateDisplayLabelColors];
+}
+
+- (void)updateDisplayLabelColors {
+    if (self.activeUnitDisplayView.tag == 1000) {
+        _inputUnitSelectionDisplayView.displayLabel.textColor = [UIColor whiteColor];
+        _resultUnitSelectionDisplayView.displayLabel.textColor = [UIColor systemGrayColor];
+    } else {
+        _inputUnitSelectionDisplayView.displayLabel.textColor = [UIColor systemGrayColor];
+        _resultUnitSelectionDisplayView.displayLabel.textColor = [UIColor whiteColor];
+    }
 }
 
 @end

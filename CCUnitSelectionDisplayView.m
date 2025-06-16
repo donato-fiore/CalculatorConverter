@@ -1,4 +1,5 @@
 #import "CCUnitSelectionDisplayView.h"
+#import "Tweak.h"
 
 @implementation CCUnitSelectionDisplayView
 
@@ -34,6 +35,11 @@
 
 
     _displayLabel = [[UILabel alloc] init];
+
+    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(changeActiveInputDisplayView:)];
+    [_displayLabel addGestureRecognizer:tapGestureRecognizer];
+    _displayLabel.userInteractionEnabled = YES;
+
     _displayLabel.translatesAutoresizingMaskIntoConstraints = NO;
     _displayLabel.textAlignment = NSTextAlignmentRight;
     _displayLabel.adjustsFontSizeToFitWidth = YES;
@@ -42,6 +48,7 @@
     [_displayLabel setContentHuggingPriority:UILayoutPriorityDefaultLow forAxis:UILayoutConstraintAxisHorizontal];
     _displayLabel.lineBreakMode = NSLineBreakByClipping;
     _displayLabel.font = [UIFont systemFontOfSize:80 weight:UIFontWeightThin];
+    _displayLabel.text = @"0";
     [self addSubview:_displayLabel];
 
     [NSLayoutConstraint activateConstraints:@[
@@ -56,6 +63,18 @@
         [_displayLabel.topAnchor constraintEqualToAnchor:self.topAnchor],
         [_displayLabel.bottomAnchor constraintEqualToAnchor:self.bottomAnchor],
     ]];
+}
+
+- (void)changeActiveInputDisplayView:(UITapGestureRecognizer *)sender {
+
+    DisplayViewController *displayVC = (DisplayViewController *)[self _viewControllerForAncestor];
+    if (!displayVC) {
+        NSLog(@"Error: DisplayViewController not found in view hierarchy.");
+        return;
+    }
+
+    displayVC.view.unitConversionDisplayView.activeUnitDisplayView = self;
+    [displayVC.view.unitConversionDisplayView updateDisplayLabelColors];
 }
 
 @end

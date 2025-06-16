@@ -2,10 +2,11 @@
 
 @interface CCUnitSelectionDisplayView : UIView {
     UIButton *_changeUnitButton;
-    UILabel *_displayLabel;
+    // UILabel *_displayLabel;
     NSNumber *_value;
 }
 
+@property (nonatomic, strong) UILabel *displayLabel;
 - (void)updateDisplayValue:(NSNumber *)value;
 
 @end
