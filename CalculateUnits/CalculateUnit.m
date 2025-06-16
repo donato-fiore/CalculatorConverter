@@ -29,12 +29,22 @@
     return _displayName;
 }
 
+- (NSString *)shortName {
+    if (!_shortName) {
+        NSString *title = [_name stringByAppendingString:@" (Short)"];
+        _shortName = [[NSBundle mainBundle] calc_localizedStringForKey:title value:@"Error" table:@"LocalizableUnitsOutput"];
+    }
+
+    return _shortName;
+}
+
 
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"<%@: %p, name: %@, unitID: %ld>", 
+    return [NSString stringWithFormat:@"<%@: %p, %@ (%@), unitID: %ld>", 
             NSStringFromClass([self class]),
             self,
+            [self shortName],
             [self displayName],
             (long)_unitID];
 }
