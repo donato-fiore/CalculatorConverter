@@ -39,6 +39,35 @@
     }];
 }
 
+- (CalculateUnitCategory *)categoryForID:(NSInteger)categoryID {
+    for (CalculateUnitCategory *category in _categories) {
+        if (category.categoryID == categoryID) {
+            return category;
+        }
+    }
+    return nil;
+}
+
+- (CalculateUnitCategory *)categoryForName:(NSString *)name {
+    for (CalculateUnitCategory *category in _categories) {
+        if ([category.name isEqualToString:name]) {
+            return category;
+        }
+    }
+    return nil;
+}
+
+- (CalculateUnit *)unitForName:(NSString *)name {
+    for (CalculateUnitCategory *category in _categories) {
+        for (CalculateUnit *unit in category.units) {
+            if ([unit.name isEqualToString:name]) {
+                return unit;
+            }
+        }
+    }
+    return nil;
+}
+
 - (NSString *)description {
     return [NSString stringWithFormat:@"<%@: %p, categories.count: %lu>", 
             NSStringFromClass([self class]), 
