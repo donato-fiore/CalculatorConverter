@@ -2,7 +2,8 @@
 
 @interface CCConversionViewController : UIViewController {
     UISearchController *_searchController;
-    UICollectionView *_collectionView;
+    UIScrollView *_categoryScrollView;
+    UIStackView *_categoryStackView;
 }
 @property (nonatomic, strong) NSString *selectedUnitIdentifier;
 @end

@@ -7,7 +7,9 @@
 }
 @property (nonatomic, strong) CalculateUnitCollection *unitCollection;
 @property (nonatomic, strong) NSBundle *calculateFrameworkBundle;
-@property (nonatomic, assign) NSInteger inputUnitID;
-@property (nonatomic, assign) NSInteger resultUnitID;
+@property (nonatomic, assign) NSUInteger inputUnitID;
+@property (nonatomic, assign) NSUInteger resultUnitID;
+@property (nonatomic, assign) NSUInteger categoryID;
+
 + (instancetype)sharedInstance;
 @end
