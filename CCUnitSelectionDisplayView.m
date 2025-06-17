@@ -23,16 +23,15 @@
 }
 
 - (void)_setupSubviews {
-    _changeUnitButton = [[UIButton alloc] init];
-    _changeUnitButton.translatesAutoresizingMaskIntoConstraints = NO;
-    [_changeUnitButton setTitle:@"USD" forState:UIControlStateNormal];
-    [_changeUnitButton setImage:[UIImage systemImageNamed:@"chevron.up.chevron.down"] forState:UIControlStateNormal];
-    [_changeUnitButton setTitleColor:[UIColor systemGrayColor] forState:UIControlStateNormal];
-    [_changeUnitButton setTitleColor:[UIColor systemFillColor] forState:UIControlStateHighlighted];
-    _changeUnitButton.tintColor = [UIColor systemGrayColor];
-    _changeUnitButton.semanticContentAttribute = UISemanticContentAttributeForceRightToLeft;
-    [self addSubview:_changeUnitButton];
-
+    self.changeUnitButton = [[UIButton alloc] init];
+    self.changeUnitButton.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.changeUnitButton setTitle:@"USD" forState:UIControlStateNormal];
+    [self.changeUnitButton setImage:[UIImage systemImageNamed:@"chevron.up.chevron.down"] forState:UIControlStateNormal];
+    [self.changeUnitButton setTitleColor:[UIColor systemGrayColor] forState:UIControlStateNormal];
+    [self.changeUnitButton setTitleColor:[UIColor systemFillColor] forState:UIControlStateHighlighted];
+    self.changeUnitButton.tintColor = [UIColor systemGrayColor];
+    self.changeUnitButton.semanticContentAttribute = UISemanticContentAttributeForceRightToLeft;
+    [self addSubview:self.changeUnitButton];
 
     _displayLabel = [[UILabel alloc] init];
 
@@ -52,12 +51,12 @@
     [self addSubview:_displayLabel];
 
     [NSLayoutConstraint activateConstraints:@[
-        [_changeUnitButton.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:-5],
-        [_changeUnitButton.centerYAnchor constraintEqualToAnchor:self.centerYAnchor],
-        [_changeUnitButton.widthAnchor constraintEqualToConstant:80],
-        [_changeUnitButton.heightAnchor constraintEqualToConstant:30],
+        [self.changeUnitButton.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:-5],
+        [self.changeUnitButton.centerYAnchor constraintEqualToAnchor:self.centerYAnchor],
+        [self.changeUnitButton.widthAnchor constraintEqualToConstant:80],
+        [self.changeUnitButton.heightAnchor constraintEqualToConstant:30],
 
-        [_displayLabel.trailingAnchor constraintEqualToAnchor:_changeUnitButton.leadingAnchor constant:-5],
+        [_displayLabel.trailingAnchor constraintEqualToAnchor:self.changeUnitButton.leadingAnchor constant:-5],
         [_displayLabel.centerYAnchor constraintEqualToAnchor:self.centerYAnchor],
         [_displayLabel.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:10],
         [_displayLabel.topAnchor constraintEqualToAnchor:self.topAnchor],

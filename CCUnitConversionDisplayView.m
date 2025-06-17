@@ -32,12 +32,16 @@
     [self addSubview:_dividerView];
 
     _inputUnitSelectionDisplayView = [[CCUnitSelectionDisplayView alloc] init];
-    _inputUnitSelectionDisplayView.tag = 1000;
+    _inputUnitSelectionDisplayView.accessibilityIdentifier = @"inputUnit";
+    [_inputUnitSelectionDisplayView.changeUnitButton addTarget:self action:@selector(changeUnit:) forControlEvents:UIControlEventTouchUpInside];
+    _inputUnitSelectionDisplayView.changeUnitButton.accessibilityIdentifier = @"inputUnitChangeButton";
     _inputUnitSelectionDisplayView.translatesAutoresizingMaskIntoConstraints = NO;
     [self addSubview:_inputUnitSelectionDisplayView];
 
     _resultUnitSelectionDisplayView = [[CCUnitSelectionDisplayView alloc] init];
-    _resultUnitSelectionDisplayView.tag = 1001;
+    _resultUnitSelectionDisplayView.accessibilityIdentifier = @"resultUnit";
+    [_resultUnitSelectionDisplayView.changeUnitButton addTarget:self action:@selector(changeUnit:) forControlEvents:UIControlEventTouchUpInside];
+    _resultUnitSelectionDisplayView.changeUnitButton.accessibilityIdentifier = @"resultUnitChangeButton";
     _resultUnitSelectionDisplayView.translatesAutoresizingMaskIntoConstraints = NO;
     [self addSubview:_resultUnitSelectionDisplayView];
 
@@ -69,13 +73,21 @@
 }
 
 - (void)updateDisplayLabelColors {
-    if (self.activeUnitDisplayView.tag == 1000) {
+    if ([self.activeUnitDisplayView.accessibilityIdentifier isEqualToString:@"inputUnit"]) {
         _inputUnitSelectionDisplayView.displayLabel.textColor = [UIColor whiteColor];
         _resultUnitSelectionDisplayView.displayLabel.textColor = [UIColor systemGrayColor];
     } else {
         _inputUnitSelectionDisplayView.displayLabel.textColor = [UIColor systemGrayColor];
         _resultUnitSelectionDisplayView.displayLabel.textColor = [UIColor whiteColor];
     }
+}
+
+- (void)changeUnit:(UIButton *)sender {
+    CCConversionViewController *vc = [[CCConversionViewController alloc] init];
+    vc.selectedUnitIdentifier = sender.accessibilityIdentifier;
+	UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+	nav.modalPresentationStyle = UIModalPresentationFormSheet;
+	[((UIView *)self).window.rootViewController presentViewController:nav animated:YES completion:nil];
 }
 
 @end
