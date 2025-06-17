@@ -3,43 +3,20 @@
 
 @implementation CalculateUnitCollection
 
-+ (instancetype)sharedCollection {
-    static CalculateUnitCollection *sharedCollection = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        NSBundle *bundle = [NSBundle bundleWithPath:@"/System/Library/PrivateFrameworks/Calculate.framework"];
-        [bundle load];
-
-        sharedCollection = [[self alloc] initWithBundle:bundle];
-    });
-
-    return sharedCollection;
-}
-
-- (instancetype)initWithBundle:(NSBundle *)bundle {
+- (instancetype)init {
     self = [super init];
     
     if (self) {
         _categories = [NSMutableArray array];
-        _calculateFrameworkBundle = bundle;
-
-        [self loadCategories];
     }
 
     return self;
 }
 
-- (void)loadCategories {
-    NSString *path = [_calculateFrameworkBundle pathForResource:@"ConverterUnits" ofType:@"plist"];
-    if (!path) {
-        NSLog(@"Error: Could not find ConverterUnits.plist in bundle %@", _calculateFrameworkBundle.bundlePath);
-        return;
-    }
-
+- (void)loadCategoriesFromDictionary:(NSDictionary *)dictionary {
     __block NSInteger unitID = 0;
     __block NSInteger categoryID = 0;
-    NSDictionary *unitsDictionary = [NSDictionary dictionaryWithContentsOfFile:path];
-    [unitsDictionary enumerateKeysAndObjectsUsingBlock:^(NSString *categoryName, NSDictionary *categoryInfo, BOOL *stop) {
+    [dictionary enumerateKeysAndObjectsUsingBlock:^(NSString *categoryName, NSDictionary *categoryInfo, BOOL *stop) {
         CalculateUnitCategory *category = [[CalculateUnitCategory alloc] initWithName:categoryName categoryInfo:categoryInfo];
         category.categoryID = categoryID++;
 
@@ -50,7 +27,15 @@
             unit.unitID = unitID++;
         }];
 
+        [category.units sortUsingComparator:^NSComparisonResult(CalculateUnit *unit1, CalculateUnit *unit2) {
+            return [unit1.name compare:unit2.name];
+        }];
+
         [_categories addObject:category];
+    }];
+
+    [_categories sortUsingComparator:^NSComparisonResult(CalculateUnitCategory *category1, CalculateUnitCategory *category2) {
+        return [category1.name compare:category2.name];
     }];
 }
 
