@@ -4,6 +4,10 @@
 
 #import "UIImage+CalculatorUnitConversion.h"
 #import "CCUnitConversionDisplayView.h"
+#import "CCConversionViewController.h"
+#import "CCUnitConversionDataProvider.h"
+
+#import "CalculateUnits/CalculateUnits.h"
 
 @interface UIView (Private)
 - (UIViewController *)_viewControllerForAncestor;
