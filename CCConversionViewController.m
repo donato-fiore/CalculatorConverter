@@ -6,7 +6,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    // self.title = self.selectedUnitIdentifier;
     self.view.backgroundColor = [UIColor systemBackgroundColor];
 
     [self _setupSubviews];
@@ -41,7 +40,6 @@
     _categoryStackView.spacing = 5;
     _categoryStackView.alignment = UIStackViewAlignmentCenter;
     _categoryStackView.translatesAutoresizingMaskIntoConstraints = NO;
-
     [_categoryScrollView addSubview:_categoryStackView];
 
     [NSLayoutConstraint activateConstraints:@[
@@ -59,8 +57,23 @@
         [_categoryStackView.heightAnchor constraintEqualToAnchor:_categoryScrollView.heightAnchor]
     ]];
 
-    // Initialize buttons for each category
     [self _initializeButtons];
+
+    // Table view
+    _unitTableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
+    _unitTableView.translatesAutoresizingMaskIntoConstraints = NO;
+    _unitTableView.dataSource = self;
+    _unitTableView.delegate = self;
+    _unitTableView.backgroundColor = [UIColor systemBackgroundColor];
+    [self.view addSubview:_unitTableView];
+
+    [NSLayoutConstraint activateConstraints:@[
+        [_unitTableView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor],
+        [_unitTableView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor],
+        [_unitTableView.topAnchor constraintEqualToAnchor:_categoryScrollView.bottomAnchor],
+        [_unitTableView.bottomAnchor constraintEqualToAnchor:self.self.view.bottomAnchor]
+    ]];
+
 }
 
 - (void)_initializeButtons {
@@ -94,12 +107,38 @@
         button.backgroundColor = [UIColor clearColor];
     }
 
-    // Select the tapped button
     sender.selected = YES;
     sender.backgroundColor = [UIColor systemOrangeColor];
 
-    // Update the selected category ID
     [CCUnitConversionDataProvider sharedInstance].categoryID = sender.tag;
+
+    [_unitTableView reloadData];
+}
+
+#pragma mark - UITableViewDataSource
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    CalculateUnitCategory *selectedCategory = [[CCUnitConversionDataProvider sharedInstance] categoryForID:[CCUnitConversionDataProvider sharedInstance].categoryID];
+    return selectedCategory.units.count;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"UnitCell"];
+    if (!cell) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"UnitCell"];
+    }
+    
+    CalculateUnitCategory *selectedCategory = [[CCUnitConversionDataProvider sharedInstance] categoryForID:[CCUnitConversionDataProvider sharedInstance].categoryID];
+    CalculateUnit *unit = selectedCategory.units[indexPath.row];
+    cell.textLabel.text = unit.displayName;
+    cell.detailTextLabel.text = unit.shortName;
+    cell.detailTextLabel.textColor = [UIColor systemGray2Color];
+
+    return cell;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return 55;
 }
 
 @end

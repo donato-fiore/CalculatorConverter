@@ -12,4 +12,5 @@
 @property (nonatomic, assign) NSUInteger categoryID;
 
 + (instancetype)sharedInstance;
+- (CalculateUnitCategory *)categoryForID:(NSInteger)categoryID;
 @end
