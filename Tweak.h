@@ -6,6 +6,7 @@
 #import "CCUnitConversionDisplayView.h"
 #import "CCConversionViewController.h"
 #import "CCUnitConversionDataProvider.h"
+#import "CCUIFooterView.h"
 
 #import "CalculateUnits/CalculateUnits.h"
 

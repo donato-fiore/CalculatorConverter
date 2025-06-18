@@ -67,13 +67,24 @@
     _unitTableView.backgroundColor = [UIColor systemBackgroundColor];
     [self.view addSubview:_unitTableView];
 
+    _currencyFooterView = [[CCUIFooterView alloc] init];
+    _currencyFooterView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.view addSubview:_currencyFooterView];
+
     [NSLayoutConstraint activateConstraints:@[
         [_unitTableView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor],
         [_unitTableView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor],
         [_unitTableView.topAnchor constraintEqualToAnchor:_categoryScrollView.bottomAnchor],
-        [_unitTableView.bottomAnchor constraintEqualToAnchor:self.self.view.bottomAnchor]
+
+        [_currencyFooterView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor],
+        [_currencyFooterView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor],
+        [_currencyFooterView.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor],
+        [_currencyFooterView.heightAnchor constraintEqualToConstant:65]
     ]];
 
+    _tableViewBottomToFooterConstraint = [_unitTableView.bottomAnchor constraintEqualToAnchor:_currencyFooterView.topAnchor];
+    _tableViewBottomToViewConstraint = [_unitTableView.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor];
+    [self _updateFooterConstraints];
 }
 
 - (void)_initializeButtons {
@@ -112,7 +123,22 @@
 
     [CCUnitConversionDataProvider sharedInstance].categoryID = sender.tag;
 
+    [self _updateFooterConstraints];
+    [_unitTableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
     [_unitTableView reloadData];
+}
+
+- (void)_updateFooterConstraints {
+    if ([CCUnitConversionDataProvider sharedInstance].categoryID == [CCUnitConversionDataProvider sharedInstance].currencyCategory.categoryID) {
+        _currencyFooterView.hidden = NO;
+        _tableViewBottomToFooterConstraint.active = YES;
+        _tableViewBottomToViewConstraint.active = NO;
+    }
+    else {
+        _currencyFooterView.hidden = YES;
+        _tableViewBottomToFooterConstraint.active = NO;
+        _tableViewBottomToViewConstraint.active = YES;
+    }
 }
 
 #pragma mark - UITableViewDataSource

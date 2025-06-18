@@ -13,4 +13,5 @@
 
 + (instancetype)sharedInstance;
 - (CalculateUnitCategory *)categoryForID:(NSInteger)categoryID;
+- (CalculateUnitCategory *)currencyCategory;
 @end
