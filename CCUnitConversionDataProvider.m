@@ -76,6 +76,7 @@
 }
 
 - (NSUInteger)categoryID {
+    // TODO: ensure that the category ID matches the input unit's category 
     return [[NSUserDefaults standardUserDefaults] integerForKey:@"Converter.CategoryID"];
 }
 
