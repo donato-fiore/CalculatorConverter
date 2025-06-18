@@ -33,6 +33,10 @@
 
     _inputUnitSelectionDisplayView = [[CCUnitSelectionDisplayView alloc] init];
     _inputUnitSelectionDisplayView.accessibilityIdentifier = @"inputUnit";
+    NSString *usd = [[CCUnitConversionDataProvider sharedInstance].unitCollection unitForName:@"USD"].shortName;
+    [_inputUnitSelectionDisplayView.changeUnitButton setTitle:usd forState:UIControlStateNormal];
+
+
     [_inputUnitSelectionDisplayView.changeUnitButton addTarget:self action:@selector(changeUnit:) forControlEvents:UIControlEventTouchUpInside];
     _inputUnitSelectionDisplayView.changeUnitButton.accessibilityIdentifier = @"inputUnitChangeButton";
     _inputUnitSelectionDisplayView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -40,6 +44,8 @@
 
     _resultUnitSelectionDisplayView = [[CCUnitSelectionDisplayView alloc] init];
     _resultUnitSelectionDisplayView.accessibilityIdentifier = @"resultUnit";
+    NSString *eur = [[CCUnitConversionDataProvider sharedInstance].unitCollection unitForName:@"EUR"].shortName;
+    [_resultUnitSelectionDisplayView.changeUnitButton setTitle:eur forState:UIControlStateNormal];
     [_resultUnitSelectionDisplayView.changeUnitButton addTarget:self action:@selector(changeUnit:) forControlEvents:UIControlEventTouchUpInside];
     _resultUnitSelectionDisplayView.changeUnitButton.accessibilityIdentifier = @"resultUnitChangeButton";
     _resultUnitSelectionDisplayView.translatesAutoresizingMaskIntoConstraints = NO;
