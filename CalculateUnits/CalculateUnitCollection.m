@@ -28,7 +28,7 @@
         }];
 
         [category.units sortUsingComparator:^NSComparisonResult(CalculateUnit *unit1, CalculateUnit *unit2) {
-            return [unit1.name compare:unit2.name];
+            return [unit1.displayName compare:unit2.displayName];
         }];
 
         [_categories addObject:category];
