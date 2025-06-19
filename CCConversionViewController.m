@@ -150,18 +150,68 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"UnitCell"];
+    [[UITableViewCell appearance] setTintColor:[UIColor systemOrangeColor]];
     if (!cell) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"UnitCell"];
     }
-    
+
     CalculateUnitCategory *selectedCategory = [[CCUnitConversionDataProvider sharedInstance] categoryForID:[CCUnitConversionDataProvider sharedInstance].categoryID];
     CalculateUnit *unit = selectedCategory.units[indexPath.row];
+
+    cell.accessoryType = UITableViewCellAccessoryNone;
+    cell.textLabel.textColor = [UIColor labelColor];
+    cell.detailTextLabel.textColor = [UIColor systemGray2Color];
+    cell.selectionStyle = UITableViewCellSelectionStyleDefault;
+    cell.userInteractionEnabled = YES;
+
     cell.textLabel.text = unit.displayName;
     cell.detailTextLabel.text = unit.shortName;
-    cell.detailTextLabel.textColor = [UIColor systemGray2Color];
+
+    BOOL isInput = [self.stagedUnitType isEqualToString:@"editingInputUnit"];
+    NSUInteger selectedID, otherID;
+    if (isInput) {
+        selectedID = [CCUnitConversionDataProvider sharedInstance].inputUnitID;
+        otherID = [CCUnitConversionDataProvider sharedInstance].resultUnitID;
+    } else {
+        selectedID = [CCUnitConversionDataProvider sharedInstance].resultUnitID;
+        otherID = [CCUnitConversionDataProvider sharedInstance].inputUnitID;
+    }
+
+    if (unit.unitID == selectedID) {
+        cell.accessoryType = UITableViewCellAccessoryCheckmark;
+        cell.textLabel.textColor = [UIColor systemOrangeColor];
+        cell.detailTextLabel.textColor = [UIColor systemOrangeColor];
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        cell.userInteractionEnabled = NO;
+    } else if (unit.unitID == otherID) {
+        cell.textLabel.textColor = [[UIColor labelColor] colorWithAlphaComponent:0.5];
+        cell.detailTextLabel.textColor = [[UIColor systemGray2Color] colorWithAlphaComponent:0.5];
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        cell.userInteractionEnabled = NO;
+    }
 
     return cell;
 }
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+
+    CalculateUnitCategory *selectedCategory = [[CCUnitConversionDataProvider sharedInstance] categoryForID:[CCUnitConversionDataProvider sharedInstance].categoryID];
+    CalculateUnit *unit = selectedCategory.units[indexPath.row];
+
+    BOOL isInput = [self.stagedUnitType isEqualToString:@"editingInputUnit"];
+    if (isInput) {
+        [CCUnitConversionDataProvider sharedInstance].inputUnitID = unit.unitID;
+    } else {
+        [CCUnitConversionDataProvider sharedInstance].resultUnitID = unit.unitID;
+    }
+
+    [_unitTableView reloadData];
+
+    [((DisplayView *)(((CalculatorController *)(self.presentingViewController)).accessibilityDisplayController.view)).unitConversionDisplayView updateButtonTitles];
+    [self close];
+}
+
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     return 55;

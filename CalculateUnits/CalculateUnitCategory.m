@@ -13,8 +13,6 @@
 
         [categoryInfo enumerateKeysAndObjectsUsingBlock:^(NSString *unitName, NSDictionary *unitInfo, BOOL *stop) {
             if ([unitName isEqualToString:@"BaseDecomposition"]) return; // Skip BaseDecomposition unit
-            // NSLog(@"[CalculateUnitCategory] unitName: %@", unitName);
-            // NSLog(@"[CalculateUnitCategory] unitInfo: %@", unitInfo);
 
             CalculateUnit *unit = [[CalculateUnit alloc] initWithName:unitName unitInfo:unitInfo];
             unit.category = self;

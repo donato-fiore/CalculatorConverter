@@ -25,7 +25,7 @@
 - (void)_setupSubviews {
     self.changeUnitButton = [[UIButton alloc] init];
     self.changeUnitButton.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.changeUnitButton setTitle:@"USD" forState:UIControlStateNormal];
+    // [self.changeUnitButton setTitle:@"USD" forState:UIControlStateNormal];
     [self.changeUnitButton setImage:[UIImage systemImageNamed:@"chevron.up.chevron.down"] forState:UIControlStateNormal];
     [self.changeUnitButton setTitleColor:[UIColor systemGrayColor] forState:UIControlStateNormal];
     [self.changeUnitButton setTitleColor:[UIColor systemFillColor] forState:UIControlStateHighlighted];

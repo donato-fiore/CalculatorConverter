@@ -94,6 +94,17 @@
     return [self.unitCollection categoryForID:categoryID];
 }
 
+- (CalculateUnit *)unitForID:(NSInteger)unitID {
+    for (CalculateUnitCategory *category in self.unitCollection.categories) {
+        for (CalculateUnit *unit in category.units) {
+            if (unit.unitID == unitID) {
+                return unit;
+            }
+        }
+    }
+    return nil;
+}
+
 - (CalculateUnitCategory *)currencyCategory {
     for (CalculateUnitCategory *category in self.unitCollection.categories) {
         if (category.isCurrency) {

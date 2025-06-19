@@ -32,24 +32,20 @@
     [self addSubview:_dividerView];
 
     _inputUnitSelectionDisplayView = [[CCUnitSelectionDisplayView alloc] init];
-    _inputUnitSelectionDisplayView.accessibilityIdentifier = @"inputUnit";
-    NSString *usd = [[CCUnitConversionDataProvider sharedInstance].unitCollection unitForName:@"USD"].shortName;
-    [_inputUnitSelectionDisplayView.changeUnitButton setTitle:usd forState:UIControlStateNormal];
-
-
+    _inputUnitSelectionDisplayView.accessibilityIdentifier = @"inputUnitDisplayView";
     [_inputUnitSelectionDisplayView.changeUnitButton addTarget:self action:@selector(changeUnit:) forControlEvents:UIControlEventTouchUpInside];
-    _inputUnitSelectionDisplayView.changeUnitButton.accessibilityIdentifier = @"inputUnitChangeButton";
+    _inputUnitSelectionDisplayView.changeUnitButton.accessibilityIdentifier = @"editingInputUnit";
     _inputUnitSelectionDisplayView.translatesAutoresizingMaskIntoConstraints = NO;
     [self addSubview:_inputUnitSelectionDisplayView];
 
     _resultUnitSelectionDisplayView = [[CCUnitSelectionDisplayView alloc] init];
-    _resultUnitSelectionDisplayView.accessibilityIdentifier = @"resultUnit";
-    NSString *eur = [[CCUnitConversionDataProvider sharedInstance].unitCollection unitForName:@"EUR"].shortName;
-    [_resultUnitSelectionDisplayView.changeUnitButton setTitle:eur forState:UIControlStateNormal];
+    _resultUnitSelectionDisplayView.accessibilityIdentifier = @"resultUnitDisplayView";
     [_resultUnitSelectionDisplayView.changeUnitButton addTarget:self action:@selector(changeUnit:) forControlEvents:UIControlEventTouchUpInside];
-    _resultUnitSelectionDisplayView.changeUnitButton.accessibilityIdentifier = @"resultUnitChangeButton";
+    _resultUnitSelectionDisplayView.changeUnitButton.accessibilityIdentifier = @"editingResultUnit";
     _resultUnitSelectionDisplayView.translatesAutoresizingMaskIntoConstraints = NO;
     [self addSubview:_resultUnitSelectionDisplayView];
+
+    [self updateButtonTitles];
 
     [NSLayoutConstraint activateConstraints:@[
         [_swapButton.centerYAnchor constraintEqualToAnchor:self.centerYAnchor],
@@ -78,8 +74,18 @@
     [self updateDisplayLabelColors];
 }
 
+- (void)updateButtonTitles {
+    CCUnitConversionDataProvider *provider = [CCUnitConversionDataProvider sharedInstance];
+
+    NSString *inputUnitStr = [provider unitForID:provider.inputUnitID].shortName;
+    [_inputUnitSelectionDisplayView.changeUnitButton setTitle:inputUnitStr forState:UIControlStateNormal];
+
+    NSString *resultUnitStr = [provider unitForID:provider.resultUnitID].shortName;
+    [_resultUnitSelectionDisplayView.changeUnitButton setTitle:resultUnitStr forState:UIControlStateNormal];
+}
+
 - (void)updateDisplayLabelColors {
-    if ([self.activeUnitDisplayView.accessibilityIdentifier isEqualToString:@"inputUnit"]) {
+    if ([self.activeUnitDisplayView.accessibilityIdentifier isEqualToString:@"inputUnitDisplayView"]) {
         _inputUnitSelectionDisplayView.displayLabel.textColor = [UIColor whiteColor];
         _resultUnitSelectionDisplayView.displayLabel.textColor = [UIColor systemGrayColor];
     } else {
@@ -90,7 +96,7 @@
 
 - (void)changeUnit:(UIButton *)sender {
     CCConversionViewController *vc = [[CCConversionViewController alloc] init];
-    vc.selectedUnitIdentifier = sender.accessibilityIdentifier;
+    vc.stagedUnitType = sender.accessibilityIdentifier;
 	UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
 	nav.modalPresentationStyle = UIModalPresentationFormSheet;
 	[((UIView *)self).window.rootViewController presentViewController:nav animated:YES completion:nil];

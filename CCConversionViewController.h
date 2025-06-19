@@ -12,5 +12,5 @@
     NSLayoutConstraint *_tableViewBottomToFooterConstraint;
     NSLayoutConstraint *_tableViewBottomToViewConstraint;
 }
-@property (nonatomic, strong) NSString *selectedUnitIdentifier;
+@property (nonatomic, strong) NSString *stagedUnitType;
 @end

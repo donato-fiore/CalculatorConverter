@@ -15,5 +15,6 @@
 
 - (void)setActiveInputValue:(NSNumber *)value;
 - (void)updateDisplayLabelColors;
+- (void)updateButtonTitles;
 
 @end

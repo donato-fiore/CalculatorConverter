@@ -1,12 +1,6 @@
 #import <Foundation/Foundation.h>
 
-@interface CalculateUnitCategory : NSObject {
-    /*
-    some form of id mapping
-    */
-    NSDictionary *_categoryInfo;
-}
-
+@interface CalculateUnitCategory : NSObject
 @property (nonatomic, assign) NSInteger categoryID;
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, strong) NSMutableArray *units;

@@ -1,7 +1,7 @@
 #import <Foundation/Foundation.h>
 #import <Calculate/Converter.h>
 #import <Calculate/CurrencyCache.h>
-#import "CalculateUnits/CalculateUnitCollection.h"
+#import "CalculateUnits/CalculateUnits.h"
 
 @interface CCUnitConversionDataProvider : NSObject {
     Converter *_converter;
@@ -15,4 +15,5 @@
 + (instancetype)sharedInstance;
 - (CalculateUnitCategory *)categoryForID:(NSInteger)categoryID;
 - (CalculateUnitCategory *)currencyCategory;
+- (CalculateUnit *)unitForID:(NSInteger)unitID;
 @end
