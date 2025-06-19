@@ -5,5 +5,6 @@
     UILabel *_lastUpdatedLabel;
     NSDate *_lastUpdatedDate;
 }
+- (instancetype)initWithLastUpdatedDate:(NSDate *)date;
 - (UIImage *)yahooFinanceLogoImage;
 @end

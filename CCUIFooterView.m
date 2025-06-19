@@ -2,7 +2,7 @@
 
 @implementation CCUIFooterView
 
-- (instancetype)init {
+- (instancetype)initWithLastUpdatedDate:(NSDate *)date {
     self = [super init];
 
     if (self) {
@@ -30,7 +30,7 @@
             [_lastUpdatedLabel.leadingAnchor constraintGreaterThanOrEqualToAnchor:_logoImageView.trailingAnchor constant:10]
 
         ]];
-        _lastUpdatedDate = [NSDate date]; // Default to current date
+        _lastUpdatedDate = date;
         _lastUpdatedLabel.text = [self lastUpdatedText];
     }
 

@@ -1,5 +1,6 @@
 #import <Foundation/Foundation.h>
 #import <Calculate/Converter.h>
+#import <Calculate/CurrencyCache.h>
 #import "CalculateUnits/CalculateUnitCollection.h"
 
 @interface CCUnitConversionDataProvider : NSObject {

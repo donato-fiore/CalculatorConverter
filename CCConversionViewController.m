@@ -67,7 +67,7 @@
     _unitTableView.backgroundColor = [UIColor systemBackgroundColor];
     [self.view addSubview:_unitTableView];
 
-    _currencyFooterView = [[CCUIFooterView alloc] init];
+    _currencyFooterView = [[CCUIFooterView alloc] initWithLastUpdatedDate:[[CurrencyCache shared] lastRefreshDate]];
     _currencyFooterView.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:_currencyFooterView];
 

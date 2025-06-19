@@ -48,6 +48,14 @@
             NSLog(@"[UnitConversionDataProvider] Default category: %@", defaultCategory);
             [defaults setInteger:defaultCategory.categoryID forKey:@"Converter.CategoryID"];
         }
+
+        CurrencyCache *currencyCache = [CurrencyCache shared];
+        BOOL success = [currencyCache refresh];
+        if (!success) {
+            NSLog(@"[UnitConversionDataProvider] Failed to refresh currency cache.");
+        } else {
+            NSLog(@"[UnitConversionDataProvider] Currency cache refreshed successfully.");
+        }
     }
 
     return self;
