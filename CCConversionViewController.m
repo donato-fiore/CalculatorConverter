@@ -11,20 +11,24 @@
     [self _setupSubviews];
 }
 
-- (void)close {
+- (void)_close {
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)_setupSubviews {
-    UIBarButtonItem *closeButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(close)];
+    UIBarButtonItem *closeButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(_close)];
     self.navigationItem.rightBarButtonItem = closeButton;
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
 
+    _resultsViewController = [[CCUISearchResultViewController alloc] init];
+
     // Search controller
-    _searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
-    // _searchController.searchResultsUpdater = self;
+    _searchController = [[UISearchController alloc] initWithSearchResultsController:_resultsViewController];
+    _searchController.searchResultsUpdater = self;
+    _searchController.searchBar.delegate = self;
+    _searchController.showsSearchResultsController = YES;
     _searchController.obscuresBackgroundDuringPresentation = NO;
-    _searchController.searchBar.placeholder = @"Search All Units";
+    _searchController.searchBar.placeholder = @"Search all units";
     self.navigationItem.searchController = _searchController;
     self.navigationItem.hidesSearchBarWhenScrolling = NO;
 
@@ -209,25 +213,37 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 
-    CalculateUnitCategory *selectedCategory = [[CCUnitConversionDataProvider sharedInstance] categoryForID:[CCUnitConversionDataProvider sharedInstance].categoryID];
+    CCUnitConversionDataProvider *provider = [CCUnitConversionDataProvider sharedInstance];
+    CalculateUnitCategory *selectedCategory = [provider categoryForID:provider.categoryID];
     CalculateUnit *unit = selectedCategory.units[indexPath.row];
+    [provider addRecentUnit:unit];
 
     BOOL isInput = [self.stagedUnitType isEqualToString:@"editingInputUnit"];
     if (isInput) {
-        [[CCUnitConversionDataProvider sharedInstance] setInputUnitID:unit.unitID];
+        [provider setInputUnitID:unit.unitID];
     } else {
-        [[CCUnitConversionDataProvider sharedInstance] setResultUnitID:unit.unitID];
+        [provider setResultUnitID:unit.unitID];
     }
 
     [_unitTableView reloadData];
 
-    [((DisplayView *)(((CalculatorController *)(self.presentingViewController)).accessibilityDisplayController.view)).unitConversionDisplayView updateButtonTitles];
-    [self close];
+    [self updateConversionUI];
+    [self _close];
 }
 
+- (void)updateConversionUI {
+    NSLog(@"Updating conversion UI");
+    [((DisplayView *)(((CalculatorController *)(self.presentingViewController)).accessibilityDisplayController.view)).unitConversionDisplayView updateButtonTitles];
+}
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     return 55;
+}
+
+#pragma mark - UISearchResultsUpdating
+
+- (void)updateSearchResultsForSearchController:(UISearchController *)searchController {
+    _resultsViewController.searchText = searchController.searchBar.text;
 }
 
 @end

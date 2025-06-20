@@ -59,6 +59,17 @@
 
         _converter = [[Converter alloc] init];
         NSLog(@"[UnitConversionDataProvider] Converter initialized: %@", _converter);
+
+        _recentUnits = [NSMutableArray array];
+        NSArray *recentUnitIDs = [defaults arrayForKey:@"Converter.RecentUnits"];
+        for (NSNumber *unitID in recentUnitIDs) {
+            CalculateUnit *unit = [self unitForID:unitID.integerValue];
+            if (unit) {
+                [_recentUnits addObject:unit];
+            } else {
+                NSLog(@"[UnitConversionDataProvider] Recent unit with ID %@ not found.", unitID);
+            }
+        }
     }
 
     return self;
@@ -130,6 +141,45 @@
 - (NSUInteger)categoryID {
     // TODO: ensure that the category ID matches the input unit's category 
     return [[NSUserDefaults standardUserDefaults] integerForKey:@"Converter.CategoryID"];
+}
+
+- (NSMutableArray<CalculateUnit *> *)recentUnits {
+    if (_recentUnits) return _recentUnits;
+
+    NSArray *recentUnitIDs = [[NSUserDefaults standardUserDefaults] arrayForKey:@"Converter.RecentUnits"];
+    _recentUnits = [NSMutableArray array];
+    for (NSNumber *unitID in recentUnitIDs) {
+        CalculateUnit *unit = [self unitForID:unitID.integerValue];
+        if (unit) {
+            [_recentUnits addObject:unit];
+        }
+    }
+    return _recentUnits;
+}
+
+
+- (void)addRecentUnit:(CalculateUnit *)unit {
+    if (!unit) {
+        NSLog(@"[UnitConversionDataProvider] Attempted to add a nil unit to recent units.");
+        return;
+    }
+
+    NSMutableArray *recentUnits = [self recentUnits];
+    if ([recentUnits containsObject:unit]) {
+        [recentUnits removeObject:unit];
+    }
+    [recentUnits insertObject:unit atIndex:0];
+
+    if (recentUnits.count > 20) {
+        [recentUnits removeLastObject];
+    }
+
+    [[NSUserDefaults standardUserDefaults] setObject:[recentUnits valueForKey:@"unitID"] forKey:@"Converter.RecentUnits"];
+}
+
+- (void)clearRecentUnits {
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"Converter.RecentUnits"];
+    _recentUnits = [NSMutableArray array];
 }
 
 - (CalculateUnitCategory *)categoryForID:(NSInteger)categoryID {
