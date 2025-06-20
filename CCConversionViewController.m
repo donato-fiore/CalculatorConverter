@@ -88,8 +88,8 @@
 }
 
 - (void)_initializeButtons {
-    NSArray<CalculateUnitCategory *> *categories = [CCUnitConversionDataProvider sharedInstance].unitCollection.categories;
-    for (CalculateUnitCategory *category in categories) {
+    CCUnitConversionDataProvider *provider = [CCUnitConversionDataProvider sharedInstance];
+    for (CalculateUnitCategory *category in provider.unitCollection.categories) {
         UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
         button.tag = category.categoryID;
         [button.titleLabel setFont:[UIFont systemFontOfSize:12 weight:UIFontWeightRegular]];
@@ -104,7 +104,10 @@
 
         [_categoryStackView addArrangedSubview:button];
 
-        if (category.categoryID == [CCUnitConversionDataProvider sharedInstance].categoryID) {
+        CalculateUnit *unit = [provider unitForID:provider.inputUnitID];
+        if (unit) provider.categoryID = unit.category.categoryID;
+
+        if (category.categoryID == provider.categoryID) {
             button.selected = YES;
             button.backgroundColor = [UIColor systemOrangeColor];
         }
