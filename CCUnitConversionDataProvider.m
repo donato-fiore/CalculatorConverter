@@ -56,9 +56,39 @@
         } else {
             NSLog(@"[UnitConversionDataProvider] Currency cache refreshed successfully.");
         }
+
+        _converter = [[Converter alloc] init];
     }
 
     return self;
+}
+
+- (NSNumber *)convertValue:(NSNumber *)value {
+    if (!value || ![value isKindOfClass:[NSNumber class]]) {
+        NSLog(@"[UnitConversionDataProvider] Invalid value for conversion: %@", value);
+        return nil;
+    }
+
+    NSUInteger inputUnitID = [self inputUnitID];
+    NSUInteger resultUnitID = [self resultUnitID];
+
+    CalculateUnit *inputUnit = [self unitForID:inputUnitID];
+    CalculateUnit *resultUnit = [self unitForID:resultUnitID];
+
+    if (!inputUnit || !resultUnit) {
+        NSLog(@"[UnitConversionDataProvider] Invalid units for conversion: %@ -> %@", inputUnit, resultUnit);
+        return nil;
+    }
+
+    [_converter setConversionType:inputUnit.name];
+    [_converter setInputValue:value];
+    [_converter setInputUnit:inputUnit.name];
+    [_converter setOutputUnit:resultUnit.name];
+
+    NSLog(@"[calc] converter: %@", _converter);
+    NSLog(@"[calc] output unit: %@", resultUnit.name);
+
+    return [_converter _operateConversionForOutputUnit:resultUnit.name];
 }
 
 - (void)setInputUnitID:(NSUInteger)inputUnitID {

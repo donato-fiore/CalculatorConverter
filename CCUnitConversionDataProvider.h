@@ -13,6 +13,7 @@
 @property (nonatomic, assign) NSUInteger categoryID;
 
 + (instancetype)sharedInstance;
+- (NSNumber *)convertValue:(NSNumber *)value;
 - (CalculateUnitCategory *)categoryForID:(NSInteger)categoryID;
 - (CalculateUnitCategory *)currencyCategory;
 - (CalculateUnit *)unitForID:(NSInteger)unitID;
