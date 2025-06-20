@@ -68,6 +68,21 @@
     return nil;
 }
 
+- (CalculateUnit *)defaultUnitForCategory:(NSInteger)categoryID excludingUnitID:(NSInteger)excludedUnitID {
+    NSLog(@"[CalculateUnitCollection] defaultUnitForCategory: %ld excludingUnitID: %ld", (long)categoryID, (long)excludedUnitID);
+    CalculateUnitCategory *category = [self categoryForID:categoryID];
+    if (!category) return nil;
+    
+    for (CalculateUnit *unit in category.units) {
+        if (unit.unitID != excludedUnitID) {
+            return unit;
+        }
+    }
+
+    NSLog(@"[CalculateUnitCollection] No unit found for category: %@", category.name);
+    return nil;
+}
+
 - (NSString *)description {
     return [NSString stringWithFormat:@"<%@: %p, categories.count: %lu>", 
             NSStringFromClass([self class]), 

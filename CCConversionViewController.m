@@ -201,9 +201,9 @@
 
     BOOL isInput = [self.stagedUnitType isEqualToString:@"editingInputUnit"];
     if (isInput) {
-        [CCUnitConversionDataProvider sharedInstance].inputUnitID = unit.unitID;
+        [[CCUnitConversionDataProvider sharedInstance] setInputUnitID:unit.unitID];
     } else {
-        [CCUnitConversionDataProvider sharedInstance].resultUnitID = unit.unitID;
+        [[CCUnitConversionDataProvider sharedInstance] setResultUnitID:unit.unitID];
     }
 
     [_unitTableView reloadData];

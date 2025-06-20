@@ -61,14 +61,14 @@
     return self;
 }
 
-#pragma mark - Custom Setters
-
 - (void)setInputUnitID:(NSUInteger)inputUnitID {
     [[NSUserDefaults standardUserDefaults] setInteger:inputUnitID forKey:@"Converter.InputUnitID"];
+    [self _syncUnitsForChangedUnitID:inputUnitID isInput:YES];
 }
 
 - (void)setResultUnitID:(NSUInteger)resultUnitID {
     [[NSUserDefaults standardUserDefaults] setInteger:resultUnitID forKey:@"Converter.ResultUnitID"];
+    [self _syncUnitsForChangedUnitID:resultUnitID isInput:NO];
 }
 
 - (void)setCategoryID:(NSUInteger)categoryID {
@@ -87,8 +87,6 @@
     // TODO: ensure that the category ID matches the input unit's category 
     return [[NSUserDefaults standardUserDefaults] integerForKey:@"Converter.CategoryID"];
 }
-
-#pragma mark - Convenience Methods
 
 - (CalculateUnitCategory *)categoryForID:(NSInteger)categoryID {
     return [self.unitCollection categoryForID:categoryID];
@@ -112,6 +110,42 @@
         }
     }
     return nil;
+}
+
+- (void)_syncUnitsForChangedUnitID:(NSUInteger)unitID isInput:(BOOL)isInput {
+    CalculateUnit *changedUnit = [self unitForID:unitID];
+    if (!changedUnit) {
+        NSLog(@"[UnitConversionDataProvider] Changed unit with ID %lu not found.", (unsigned long)unitID);
+        return;
+    }
+
+    CalculateUnitCategory *category = changedUnit.category;
+    if (!category) {
+        NSLog(@"[UnitConversionDataProvider] Changed unit %@ does not have a valid category.", changedUnit);
+        return;
+    }
+
+
+    NSString *otherKey = isInput ? @"Converter.ResultUnitID" : @"Converter.InputUnitID";
+    NSLog(@"[UnitConversionDataProvider] Changed %@ unit to: %@", otherKey, changedUnit);
+    NSUInteger otherUnitID = [[NSUserDefaults standardUserDefaults] integerForKey:otherKey];
+    CalculateUnit *otherUnit = [self unitForID:otherUnitID];
+
+    if (!otherUnit || otherUnit.category.categoryID != category.categoryID) {
+        CalculateUnit *newOtherUnit = [self.unitCollection defaultUnitForCategory:category.categoryID excludingUnitID:unitID];
+        if (newOtherUnit) {
+            NSLog(@"[UnitConversionDataProvider] %@ -> %@", otherKey, newOtherUnit);
+            if (isInput) {
+                [self setResultUnitID:newOtherUnit.unitID];
+            } else {
+                [self setInputUnitID:newOtherUnit.unitID];
+            }
+        } else {
+            NSLog(@"[UnitConversionDataProvider] ERROR: (%@) nothing found for category: %@", otherKey, category);
+        }
+    } else {
+        NSLog(@"[UnitConversionDataProvider] %@ unit is still valid: %@", otherKey, otherUnit);
+    }
 }
 
 @end

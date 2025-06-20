@@ -7,7 +7,10 @@
 }
 @property (nonatomic, strong) NSMutableArray<CalculateUnitCategory *> *categories;
 - (void)loadCategoriesFromDictionary:(NSDictionary *)dictionary;
-- (CalculateUnitCategory *)categoryForID:(NSInteger)categoryID;
 - (CalculateUnit *)unitForName:(NSString *)name;
 - (CalculateUnitCategory *)categoryForName:(NSString *)name;
+- (CalculateUnitCategory *)categoryForID:(NSInteger)categoryID;
+
+- (CalculateUnit *)defaultUnitForCategory:(NSInteger)categoryID excludingUnitID:(NSInteger)excludedUnitID;
+
 @end
