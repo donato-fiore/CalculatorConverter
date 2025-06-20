@@ -71,7 +71,8 @@
 
 - (void)calculatorModel:(id /* Calculator.CalculatorModel */)calculatorModel didUpdateDisplayValue:(DisplayValue *)displayValue shouldFlashDisplay:(BOOL)shouldFlashDisplay {
 	%orig;
-	DisplayView* displayView = ((DisplayViewController *)[self getSwiftIvar:@"displayController"]).view;
+	DisplayView *displayView = ((DisplayViewController *)[self getSwiftIvar:@"displayController"]).view;
+	if (!displayView.isUnitConversionMode) return;
 	NSNumber *displayValueNumber = [[NSNumberFormatter new] numberFromString:[displayValue accessibilityStringValue]];
 	[displayView.unitConversionDisplayView setActiveInputValue:displayValueNumber];
 }

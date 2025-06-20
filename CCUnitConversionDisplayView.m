@@ -15,6 +15,13 @@
 
 - (void)setActiveInputValue:(NSNumber *)value {
     [self.activeUnitDisplayView updateDisplayValue:value]; 
+
+    NSNumber *convertedValue = [[CCUnitConversionDataProvider sharedInstance] convertValue:value];
+    if ([self.activeUnitDisplayView.accessibilityIdentifier isEqualToString:@"inputUnitDisplayView"]) {
+        [_resultUnitSelectionDisplayView updateDisplayValue:convertedValue];
+    } else {
+        [_inputUnitSelectionDisplayView updateDisplayValue:convertedValue];
+    }
 }
 
 - (void)_setupSubviews {
