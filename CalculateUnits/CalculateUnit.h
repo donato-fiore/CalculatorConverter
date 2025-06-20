@@ -1,6 +1,6 @@
 #import <Foundation/Foundation.h>
 
-#import "CalculateUnitCategory.h"
+@class CalculateUnitCategory;
 
 @interface CalculateUnit : NSObject {
     NSString *_displayName;
