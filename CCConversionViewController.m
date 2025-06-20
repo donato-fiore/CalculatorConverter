@@ -18,7 +18,7 @@
 - (void)_setupSubviews {
     UIBarButtonItem *closeButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(_close)];
     self.navigationItem.rightBarButtonItem = closeButton;
-    self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
+    self.navigationController.navigationBar.tintColor = [UIColor systemOrangeColor];
 
     _resultsViewController = [[CCUISearchResultViewController alloc] init];
 

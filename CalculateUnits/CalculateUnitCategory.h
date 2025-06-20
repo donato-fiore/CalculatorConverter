@@ -1,4 +1,5 @@
 #import <Foundation/Foundation.h>
+#import "CalculateUnit.h"
 
 @interface CalculateUnitCategory : NSObject
 @property (nonatomic, assign) NSInteger categoryID;
@@ -7,5 +8,6 @@
 @property (nonatomic, assign) BOOL isCurrency;
 
 - (instancetype)initWithName:(NSString *)name categoryInfo:(NSDictionary *)categoryInfo;
+- (instancetype)filteredUnitsMatchingString:(NSString *)searchString;
 
 @end

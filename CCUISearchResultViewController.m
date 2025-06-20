@@ -5,15 +5,9 @@
 @implementation CCUISearchResultViewController
 @synthesize searchText = _searchText;
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section; {
-    if (_searchText.length == 0) {
-        NSLog(@"[CCUISearchResultViewController] recent units count: %lu", (unsigned long)[CCUnitConversionDataProvider sharedInstance].recentUnits.count);
-        return [CCUnitConversionDataProvider sharedInstance].recentUnits.count;
-    }
-
-    // NSArray *filteredUnits = [[CCUnitConversionDataProvider sharedInstance] unitsMatchingSearchText:_searchText];
-    // return filteredUnits.count;
-    return 0;
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -26,31 +20,31 @@
     cell.detailTextLabel.textColor = [UIColor systemGray2Color];
     cell.selectionStyle = UITableViewCellSelectionStyleDefault;
     cell.userInteractionEnabled = YES;
+    CalculateUnit *unit;
 
     if (_searchText.length == 0) {
-        CalculateUnit *unit = [CCUnitConversionDataProvider sharedInstance].recentUnits[indexPath.row];
-        cell.textLabel.text = unit.displayName;
-        cell.detailTextLabel.text = unit.shortName;
-
-        BOOL isInput = [[self _conversionViewController].stagedUnitType isEqualToString:@"editingInputUnit"];
-        NSUInteger otherID;
-        if (isInput) {
-            otherID = [CCUnitConversionDataProvider sharedInstance].resultUnitID;
-        } else {
-            otherID = [CCUnitConversionDataProvider sharedInstance].inputUnitID;
-        }
-
-        if (unit.unitID == otherID) {
-            cell.userInteractionEnabled = NO;
-            cell.textLabel.textColor = [[UIColor labelColor] colorWithAlphaComponent:0.5];
-            cell.detailTextLabel.textColor = [[UIColor systemGray2Color] colorWithAlphaComponent:0.5];
-            cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        }
+        unit = [CCUnitConversionDataProvider sharedInstance].recentUnits[indexPath.row];
     } else {
-        // Configure cell with filtered unit
-        // NSArray *filteredUnits = [[CCUnitConversionDataProvider sharedInstance] unitsMatchingSearchText:_searchText];
-        // CalculateUnit *unit = filteredUnits[indexPath.row];
-        // cell.textLabel.text = unit.name;
+        CalculateUnitCategory *category = [self _filteredUnits][indexPath.section];
+        unit = category.units[indexPath.row];
+    }
+
+    cell.textLabel.text = unit.displayName;
+    cell.detailTextLabel.text = unit.shortName;
+
+    BOOL isInput = [[self _conversionViewController].stagedUnitType isEqualToString:@"editingInputUnit"];
+    NSUInteger otherID;
+    if (isInput) {
+        otherID = [CCUnitConversionDataProvider sharedInstance].resultUnitID;
+    } else {
+        otherID = [CCUnitConversionDataProvider sharedInstance].inputUnitID;
+    }
+
+    if (unit.unitID == otherID) {
+        cell.userInteractionEnabled = NO;
+        cell.textLabel.textColor = [[UIColor labelColor] colorWithAlphaComponent:0.5];
+        cell.detailTextLabel.textColor = [[UIColor systemGray2Color] colorWithAlphaComponent:0.5];
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
 
     return cell;
@@ -59,24 +53,30 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 
+    CalculateUnit *selectedUnit;
     CCUnitConversionDataProvider *provider = [CCUnitConversionDataProvider sharedInstance];
     BOOL isInput = [[self _conversionViewController].stagedUnitType isEqualToString:@"editingInputUnit"];
-    CalculateUnit *selectedUnit = provider.recentUnits[indexPath.row];
+    if (_searchText.length == 0) {
+        selectedUnit = provider.recentUnits[indexPath.row];
+    } else {
+        CalculateUnitCategory *category = [self _filteredUnits][indexPath.section];
+        selectedUnit = category.units[indexPath.row];
+    }
+
+    if (!selectedUnit) {
+        NSLog(@"[CCUISearchResultViewController] ERROR: Selected unit is nil.");
+        return;
+    }
+
     if (isInput) {
-        // provider.inputUnitID = selectedUnit.unitID;
         [provider setInputUnitID:selectedUnit.unitID];
     } else {
-        // provider.resultUnitID = selectedUnit.unitID;
         [provider setResultUnitID:selectedUnit.unitID];
     }
 
     [self.tableView reloadData];
     [[self _conversionViewController] updateConversionUI];
     [self.view.window.rootViewController dismissViewControllerAnimated:YES completion:nil];
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 55;
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
@@ -113,10 +113,34 @@
     return headerView;
 }
 
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section;
+{
+    if (_searchText.length == 0) {
+        return [CCUnitConversionDataProvider sharedInstance].recentUnits.count;
+    }
+
+    return [self _filteredUnits][section].units.count;
+}
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    if (_searchText.length == 0) return 1;
+
+    return [self _filteredUnits].count;
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+    if (_searchText.length == 0) return nil;
+
+    CalculateUnitCategory *category = [self _filteredUnits][section];
+    return category.name;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return 55;
+}
+
 - (void)setSearchText:(NSString *)searchText {
     _searchText = searchText;
-    NSLog(@"[CCUISearchResultViewController] Search text set to: %@", searchText);
-
     [self.tableView reloadData];
 }
 
@@ -127,6 +151,20 @@
 
 - (CCConversionViewController *)_conversionViewController {
     return (CCConversionViewController *)self.presentingViewController;
+}
+
+- (NSArray<CalculateUnitCategory *> *)_filteredUnits {
+    if (_searchText.length == 0) return nil;
+
+    NSMutableArray *filteredUnits = [NSMutableArray array];
+    for (CalculateUnitCategory *category in [CCUnitConversionDataProvider sharedInstance].unitCollection.categories) {
+        CalculateUnitCategory *filteredCategory = [category filteredUnitsMatchingString:_searchText];
+        if (filteredCategory && filteredCategory.units.count > 0) {
+            [filteredUnits addObject:filteredCategory];
+        }
+    }
+
+    return filteredUnits;
 }
 
 @end

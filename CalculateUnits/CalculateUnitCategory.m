@@ -22,6 +22,25 @@
     return self;
 }
 
+- (instancetype)filteredUnitsMatchingString:(NSString *)searchString {
+    if (searchString.length == 0) return self;
+
+    NSMutableArray *filteredUnits = [NSMutableArray array];
+    for (CalculateUnit *unit in _units) {
+        if ([unit.displayName rangeOfString:searchString options:NSCaseInsensitiveSearch].location != NSNotFound ||
+            [unit.shortName rangeOfString:searchString options:NSCaseInsensitiveSearch].location != NSNotFound ||
+            [unit.name rangeOfString:searchString options:NSCaseInsensitiveSearch].location != NSNotFound) {
+            [filteredUnits addObject:unit];
+        }
+    }
+
+    CalculateUnitCategory *filteredCategory = [[CalculateUnitCategory alloc] initWithName:_name categoryInfo:@{}];
+    filteredCategory.units = filteredUnits;
+    filteredCategory.isCurrency = _isCurrency;
+
+    return filteredCategory;
+}
+
 - (NSString *)description {
     return [NSString stringWithFormat:@"<%@: %p, name: %@, units.count: %lu>", 
             NSStringFromClass([self class]),
