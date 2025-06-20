@@ -1,6 +1,6 @@
 #import "CalculateUnit.h"
 #import "CalculateUnitCollection.h"
-#import "../NSBundle+CalculatorUnit.h"
+#import <Extensions/Extensions.h>
 
 @implementation CalculateUnit
 @synthesize displayName = _displayName;

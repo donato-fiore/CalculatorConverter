@@ -1,13 +1,12 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import "NSObject+SwiftIvar.h"
 
-#import "UIImage+CalculatorUnitConversion.h"
 #import "CCUnitConversionDisplayView.h"
 #import "CCConversionViewController.h"
 #import "CCUnitConversionDataProvider.h"
 #import "CCUIFooterView.h"
 
+#import <Extensions/Extensions.h>
 #import "CalculateUnits/CalculateUnits.h"
 
 @interface UIView (Private)
