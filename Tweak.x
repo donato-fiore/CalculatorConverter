@@ -77,6 +77,22 @@
 	[displayView.unitConversionDisplayView setActiveInputValue:displayValueNumber];
 }
 
+- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
+%orig;
+	DisplayView *displayView = ((DisplayViewController *)[self getSwiftIvar:@"displayController"]).view;
+	if (!displayView) return;
+	
+	if (size.width > size.height) {	// landscape
+		displayView.navigationBar.hidden = YES;
+		displayView.unitConversionDisplayView.hidden = YES;
+	} else {	// portrait
+		displayView.navigationBar.hidden = NO;
+		if (displayView.isUnitConversionMode) {
+			displayView.unitConversionDisplayView.hidden = NO;
+		}
+	}
+}
+
 %end
 
 %ctor {
