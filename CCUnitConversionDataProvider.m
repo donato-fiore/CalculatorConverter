@@ -58,6 +58,7 @@
         }
 
         _converter = [[Converter alloc] init];
+        NSLog(@"[UnitConversionDataProvider] Converter initialized: %@", _converter);
     }
 
     return self;
@@ -80,15 +81,28 @@
         return nil;
     }
 
-    [_converter setConversionType:inputUnit.name];
-    [_converter setInputValue:value];
-    [_converter setInputUnit:inputUnit.name];
-    [_converter setOutputUnit:resultUnit.name];
+    if (!inputUnit.category.isCurrency) {
+        [_converter setConversionType:inputUnit.name];
+        [_converter setInputValue:value];
+        [_converter setInputUnit:inputUnit.name];
+        [_converter setOutputUnit:resultUnit.name];
 
-    NSLog(@"[calc] converter: %@", _converter);
-    NSLog(@"[calc] output unit: %@", resultUnit.name);
+        return [_converter _operateConversionForOutputUnit:resultUnit.name];
+    }
 
-    return [_converter _operateConversionForOutputUnit:resultUnit.name];
+    NSDictionary *currencyData = [[CurrencyCache shared] currencyData];
+    if (!currencyData) {
+        NSLog(@"[UnitConversionDataProvider] No currency data available for conversion.");
+        return nil;
+    }
+
+    NSLog(@"[UnitConversionDataProvider] Converting currency: %@ -> %@", inputUnit.name, resultUnit.name);
+    NSNumber *inputRate = currencyData[inputUnit.name];
+    NSNumber *resultRate = currencyData[resultUnit.name];
+
+    NSLog(@"[UnitConversionDataProvider] Input rate: %@, Result rate: %@", inputRate, resultRate);
+
+    return @([value doubleValue] * ([resultRate doubleValue] / [inputRate doubleValue]));
 }
 
 - (void)setInputUnitID:(NSUInteger)inputUnitID {
