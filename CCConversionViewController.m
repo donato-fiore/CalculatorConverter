@@ -110,6 +110,15 @@
         if (category.categoryID == provider.categoryID) {
             button.selected = YES;
             button.backgroundColor = [UIColor systemOrangeColor];
+
+            dispatch_async(dispatch_get_main_queue(), ^{
+                CGRect visibleRect = [_categoryScrollView convertRect:button.bounds fromView:button];
+
+                CGFloat offsetX = CGRectGetMidX(visibleRect) - CGRectGetWidth(_categoryScrollView.bounds) / 2;
+                offsetX = MAX(0, MIN(offsetX, _categoryScrollView.contentSize.width - _categoryScrollView.bounds.size.width));
+
+                [_categoryScrollView setContentOffset:CGPointMake(offsetX, 0) animated:NO];
+            });
         }
     }
 }
