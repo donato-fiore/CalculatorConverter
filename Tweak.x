@@ -78,8 +78,6 @@
 
 %end
 
-#import "CalculateUnits/CalculateUnits.h"
-
 %ctor {
 	%init(DisplayView = objc_getClass("Calculator.DisplayView"), 
 		  CalculatorController = objc_getClass("Calculator.CalculatorController"));
