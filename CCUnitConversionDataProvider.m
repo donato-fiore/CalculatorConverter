@@ -1,4 +1,6 @@
 #import "CCUnitConversionDataProvider.h"
+#import "Tweak.h"
+#import <objc/runtime.h>
 
 @implementation CCUnitConversionDataProvider
 
@@ -60,6 +62,8 @@
         _converter = [[Converter alloc] init];
         NSLog(@"[UnitConversionDataProvider] Converter initialized: %@", _converter);
 
+        self.numberFormatter = [[objc_getClass("Calculator.CalculatorNumberFormatter") alloc] initWithMaximumDigitCount:15];
+
         _recentUnits = [NSMutableArray array];
         NSArray *recentUnitIDs = [defaults arrayForKey:@"Converter.RecentUnits"];
         for (NSNumber *unitID in recentUnitIDs) {
@@ -75,14 +79,21 @@
     return self;
 }
 
-- (NSNumber *)convertValue:(NSNumber *)value {
-    if (!value || ![value isKindOfClass:[NSNumber class]]) {
+- (DisplayValue *)convertDisplayValue:(DisplayValue *)value direction:(CCUnitConversionDirection)direction {
+    if (!value) {
         NSLog(@"[UnitConversionDataProvider] Invalid value for conversion: %@", value);
         return nil;
     }
 
-    NSUInteger inputUnitID = [self inputUnitID];
-    NSUInteger resultUnitID = [self resultUnitID];
+    NSUInteger inputUnitID, resultUnitID;
+    if (direction == CCUnitConversionDirectionInputToResult) {
+        inputUnitID = [self inputUnitID];
+        resultUnitID = [self resultUnitID];
+    } else {
+        inputUnitID = [self resultUnitID];
+        resultUnitID = [self inputUnitID];
+    }
+
 
     CalculateUnit *inputUnit = [self unitForID:inputUnitID];
     CalculateUnit *resultUnit = [self unitForID:resultUnitID];
@@ -92,13 +103,18 @@
         return nil;
     }
 
+    NSNumber *inputValue = [self.numberFormatter numberFromString:[value accessibilityStringValue]];
+
     if (!inputUnit.category.isCurrency) {
         [_converter setConversionType:inputUnit.name];
-        [_converter setInputValue:value];
+        [_converter setInputValue:inputValue];
         [_converter setInputUnit:inputUnit.name];
         [_converter setOutputUnit:resultUnit.name];
 
-        return [_converter _operateConversionForOutputUnit:resultUnit.name];
+        NSNumber *convertedValue = [_converter _operateConversionForOutputUnit:resultUnit.name];
+
+        NSString *formattedValue = [self.numberFormatter stringFromNumber:convertedValue];
+        return [[objc_getClass("Calculator.DisplayValue") alloc] initWithValue:formattedValue userEntered:NO];
     }
 
     NSDictionary *currencyData = [[CurrencyCache shared] currencyData];
@@ -113,8 +129,26 @@
 
     NSLog(@"[UnitConversionDataProvider] Input rate: %@, Result rate: %@", inputRate, resultRate);
 
-    return @([value doubleValue] * ([resultRate doubleValue] / [inputRate doubleValue]));
+    NSDecimalNumber *inputAmount = [NSDecimalNumber decimalNumberWithString:[value valueString]];
+    NSDecimalNumber *inputRateDecimal = [NSDecimalNumber decimalNumberWithDecimal:[inputRate decimalValue]];
+    NSDecimalNumber *resultRateDecimal = [NSDecimalNumber decimalNumberWithDecimal:[resultRate decimalValue]];
+
+    NSDecimalNumber *rateRatio = [resultRateDecimal decimalNumberByDividingBy:inputRateDecimal];
+    NSDecimalNumber *converted = [inputAmount decimalNumberByMultiplyingBy:rateRatio];
+
+    NSDecimalNumberHandler *roundingBehavior = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain
+                                                                                                        scale:2
+                                                                                             raiseOnExactness:NO
+                                                                                              raiseOnOverflow:NO
+                                                                                             raiseOnUnderflow:NO
+                                                                                          raiseOnDivideByZero:YES];
+
+    NSDecimalNumber *roundedConverted = [converted decimalNumberByRoundingAccordingToBehavior:roundingBehavior];
+
+    NSString *formattedValue = [self.numberFormatter stringFromNumber:roundedConverted];
+    return [[objc_getClass("Calculator.DisplayValue") alloc] initWithValue:formattedValue userEntered:NO];
 }
+
 
 - (void)setInputUnitID:(NSUInteger)inputUnitID {
     [[NSUserDefaults standardUserDefaults] setInteger:inputUnitID forKey:@"Converter.InputUnitID"];

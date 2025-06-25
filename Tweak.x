@@ -1,4 +1,13 @@
 #import "Tweak.h"
+#import <objc/runtime.h>
+#import <dlfcn.h>
+// 
+// #import "CCConversionViewController.h"
+// #import "CCUnitConversionDataProvider.h"
+// #import "CCUIFooterView.h"
+
+// #import "CalculateUnits/CalculateUnits.h"
+
 
 %hook DisplayView
 %property (nonatomic, strong) UINavigationBar *navigationBar;
@@ -67,18 +76,114 @@
 
 %end
 
+%hook DisplayViewController
+
+- (void)longPress:(UILongPressGestureRecognizer *)gestureRecognizer {
+	DisplayView *displayView = ((DisplayViewController *)self).view;
+	if (!displayView.isUnitConversionMode) {
+		%orig;
+		return;
+	}
+
+	if (gestureRecognizer.state == UIGestureRecognizerStateBegan) {
+		[self becomeFirstResponder];
+
+		UIMenuController *menuController = [UIMenuController sharedMenuController];
+		UILabel *displayLabel = displayView.unitConversionDisplayView.activeUnitDisplayView.displayLabel;
+		NSLog(@"displayLabel: %@", displayLabel);
+		NSLog(@"displayLabel bounds: %@", NSStringFromCGRect(displayLabel.bounds));
+
+		CGRect effectiveBounds = [displayLabel effectiveTextBounds];
+		CGRect finalFrame = CGRectMake(
+			effectiveBounds.origin.x / 2,
+			displayLabel.frame.origin.y + effectiveBounds.origin.y,
+			effectiveBounds.size.width,
+			effectiveBounds.size.height
+		);
+		// NSLog(@"effectiveBounds: %@", NSStringFromCGRect(effectiveBounds));
+
+		// // CGRect offsetBounds = CGRectOffset(displayLabel.frame, effectiveBounds.origin.x, effectiveBounds.origin.y);
+		// CGRect offsetBounds = CGRectOffset(displayLabel.frame, effectiveBounds.origin.x - displayLabel.bounds.origin.x, effectiveBounds.origin.y - displayLabel.bounds.origin.y);
+		// // NSLog(@"offsetBounds: %@", NSStringFromCGRect(offsetBounds));
+		[menuController showMenuFromView:displayLabel rect:finalFrame];
+	}
+}
+
+// - (BOOL)becomeFirstResponder {
+// 	DisplayViewController *displayViewController = (DisplayViewController *)self;
+// 	DisplayView *displayView = displayViewController.view;
+// 	if (!displayView.isUnitConversionMode) {
+// 		return %orig;
+// 	}
+
+// 	struct objc_super superInfo = { displayViewController, [displayViewController superclass] };
+// 	BOOL result = ((BOOL (*)(struct objc_super *, SEL))objc_msgSendSuper)(&superInfo, @selector(becomeFirstResponder));
+// 	CCUnitConversionDisplayView *unitConversionDisplayView = displayView.unitConversionDisplayView;
+
+// 	if (unitConversionDisplayView.highlighted) {
+// 		if (unitConversionDisplayView.highlightOverlayView) return result;
+// 		CGRect effectiveBounds = [unitConversionDisplayView.activeUnitDisplayView.displayLabel effectiveTextBounds];
+
+// 		CGRect tmpFrame1 = CGRectOffset(unitConversionDisplayView.activeUnitDisplayView.displayLabel.frame, effectiveBounds.origin.x, effectiveBounds.origin.y);
+// 		CGRect tmpFrame2 = [unitConversionDisplayView convertRect:tmpFrame1 fromCoordinateSpace:unitConversionDisplayView.activeUnitDisplayView];
+
+// 		NSLog(@"effectiveBounds: %@", NSStringFromCGRect(effectiveBounds));
+// 		NSLog(@"tmpFrame1: %@", NSStringFromCGRect(tmpFrame1));
+// 		NSLog(@"tmpFrame2: %@", NSStringFromCGRect(tmpFrame2));
+// 	}
+
+// 	if (!unitConversionDisplayView.highlightOverlayView) return result;
+// 	[unitConversionDisplayView.highlightOverlayView removeFromSuperview];
+
+
+
+// 	return result;
+// }
+
+- (void)copy:(id)sender {
+	DisplayView *displayView = ((DisplayViewController *)self).view;
+	if (!displayView.isUnitConversionMode) {
+		%orig;
+		return;
+	}
+
+	if (!displayView.unitConversionDisplayView.activeUnitDisplayView) {
+		return;
+	}
+
+	UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+	[pasteboard setString:displayView.unitConversionDisplayView.activeUnitDisplayView.displayLabel.text];
+}
+
+%end
+
 %hook CalculatorController
 
-- (void)calculatorModel:(id /* Calculator.CalculatorModel */)calculatorModel didUpdateDisplayValue:(DisplayValue *)displayValue shouldFlashDisplay:(BOOL)shouldFlashDisplay {
+// static void (*orig_didUpdateDisplayValue_ptr)(id, SEL, id, DisplayValue *, BOOL) = NULL;
+
+%new
+- (void)setDisplayValue:(DisplayValue *)displayValue shouldFlashDisplay:(BOOL)shouldFlashDisplay {
+    CalculatorModel *model = (CalculatorModel *)[self getSwiftIvar:@"model"];
+    if (!model) {
+        NSLog(@"[Tweak] CalculatorModel not found in CalculatorController.");
+        return;
+    }
+
+	[self calculatorModel:model didUpdateDisplayValue:displayValue shouldFlashDisplay:shouldFlashDisplay];
+}
+
+- (void)calculatorModel:(id)calculatorModel didUpdateDisplayValue:(DisplayValue *)displayValue shouldFlashDisplay:(BOOL)shouldFlashDisplay {
 	%orig;
-	DisplayView *displayView = ((DisplayViewController *)[self getSwiftIvar:@"displayController"]).view;
-	if (!displayView.isUnitConversionMode) return;
-	NSNumber *displayValueNumber = [[NSNumberFormatter new] numberFromString:[displayValue accessibilityStringValue]];
-	[displayView.unitConversionDisplayView setActiveInputValue:displayValueNumber];
+
+	NSLog(@"[Tweak] displayValue: %@", displayValue);
+
+    DisplayView *displayView = ((DisplayViewController *)[self getSwiftIvar:@"displayController"]).view;
+    if (!displayView.isUnitConversionMode) return;
+    [displayView.unitConversionDisplayView didUpdateDisplayValue:displayValue];
 }
 
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
-%orig;
+	%orig;
 	DisplayView *displayView = ((DisplayViewController *)[self getSwiftIvar:@"displayController"]).view;
 	if (!displayView) return;
 	
@@ -95,7 +200,10 @@
 
 %end
 
-%ctor {
-	%init(DisplayView = objc_getClass("Calculator.DisplayView"), 
+
+__attribute__((constructor))
+static void init_zzz_CalculatorConverter_Tweak(void) {
+	%init(DisplayView = objc_getClass("Calculator.DisplayView"),
+		  DisplayViewController = objc_getClass("Calculator.DisplayViewController"),
 		  CalculatorController = objc_getClass("Calculator.CalculatorController"));
 }

@@ -1,5 +1,8 @@
 #import "CCUnitSelectionDisplayView.h"
+#import "CCUnitConversionDataProvider.h"
 #import "Tweak.h"
+#import <objc/runtime.h>
+#import <substrate.h>
 
 @implementation CCUnitSelectionDisplayView
 
@@ -7,19 +10,37 @@
     self = [super init];
     
     if (self) {
+        self.displayValue = [[objc_getClass("Calculator.DisplayValue") alloc] initWithValue:@"0" userEntered:NO];
         [self _setupSubviews];
     }
     
     return self;
 }
 
-- (void)updateDisplayValue:(NSNumber *)value {
-    _value = value;
-    NSNumberFormatter *formatter = [NSNumberFormatter new];
-    formatter.numberStyle = NSNumberFormatterDecimalStyle;
+// - (void)updateDisplayValue:(NSNumber *)value {
+//     _value = value;
+//     NSNumberFormatter *formatter = [NSNumberFormatter new];
+//     formatter.numberStyle = NSNumberFormatterDecimalStyle;
 
-    NSString *formattedInputValue = [formatter stringFromNumber:value];
-    _displayLabel.text = formattedInputValue;
+//     NSString *formattedInputValue = [formatter stringFromNumber:value];
+//     _displayLabel.text = formattedInputValue;
+// }
+
+- (void)updateDisplayValue:(DisplayValue *)value {
+    self.displayValue = value;
+
+    CCUnitConversionDataProvider *provider = [CCUnitConversionDataProvider sharedInstance];
+    NSNumber *numberValue = [provider.numberFormatter numberFromString:[value accessibilityStringValue]];
+    // NSNumberFormatter *numberFormatter = [CCUnitConversionDataProvider sharedInstance].numberFormatter;
+    NSString *displayText = [provider.numberFormatter stringFromNumber:numberValue];
+    if ([[provider unitForID:provider.inputUnitID].category isCurrency]) {
+        provider.numberFormatter.numberStyle = NSNumberFormatterCurrencyStyle;
+
+        displayText = [provider.numberFormatter stringFromNumber:numberValue];
+
+        provider.numberFormatter.numberStyle = NSNumberFormatterDecimalStyle;
+    }
+    _displayLabel.text = displayText;
 }
 
 - (void)_setupSubviews {
@@ -65,7 +86,6 @@
 }
 
 - (void)changeActiveInputDisplayView:(UITapGestureRecognizer *)sender {
-
     DisplayViewController *displayVC = (DisplayViewController *)[self _viewControllerForAncestor];
     if (!displayVC) {
         NSLog(@"Error: DisplayViewController not found in view hierarchy.");
@@ -74,6 +94,21 @@
 
     displayVC.view.unitConversionDisplayView.activeUnitDisplayView = self;
     [displayVC.view.unitConversionDisplayView updateDisplayLabelColors];
+
+    CalculatorController *controller = [(id)([UIApplication sharedApplication].delegate) getSwiftIvar:@"controller"];
+    if (!controller) {
+        NSLog(@"[CCUnitSelectionDisplayView] CalculatorController not found in app delegate.");
+        return;
+    }
+
+    CalculatorModel *model = (CalculatorModel *)[controller getSwiftIvar:@"model"];
+    if (!model) {
+        NSLog(@"[Tweak] CalculatorModel not found in CalculatorController.");
+        return;
+    }
+    MSHookIvar<BOOL>(model, "equalsKeyPressed") = YES;
+
+    [controller calculatorModel:model didUpdateDisplayValue:self.displayValue shouldFlashDisplay:NO];
 }
 
 @end

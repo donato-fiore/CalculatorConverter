@@ -12,8 +12,11 @@
     CCUnitSelectionDisplayView *_resultUnitSelectionDisplayView;
 }
 @property (nonatomic, strong) CCUnitSelectionDisplayView *activeUnitDisplayView;
+@property (nonatomic, strong) UIView *highlightOverlayView;
+@property (nonatomic, assign) BOOL highlighted;
 
-- (void)setActiveInputValue:(NSNumber *)value;
+- (CCUnitSelectionDisplayView *)otherUnitDisplayView;
+- (void)didUpdateDisplayValue:(DisplayValue *)value;
 - (void)updateDisplayLabelColors;
 - (void)updateButtonTitles;
 

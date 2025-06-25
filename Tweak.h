@@ -1,13 +1,8 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import <Extensions/Extensions.h>
 
 #import "CCUnitConversionDisplayView.h"
-#import "CCConversionViewController.h"
-#import "CCUnitConversionDataProvider.h"
-#import "CCUIFooterView.h"
-
-#import <Extensions/Extensions.h>
-#import "CalculateUnits/CalculateUnits.h"
 
 @interface UIView (Private)
 - (UIViewController *)_viewControllerForAncestor;
@@ -25,8 +20,15 @@
 @property (nonatomic, strong) DisplayView *view;
 @end
 
+@interface CalculatorModel : NSObject
+@end
+
 @interface CalculatorController : UIViewController
 @property (nonatomic, strong) DisplayViewController *accessibilityDisplayController;
+- (void)calculatorModel:(CalculatorModel *)model didUpdateDisplayValue:(DisplayValue *)displayValue shouldFlashDisplay:(BOOL)shouldFlash;
+@end
+
+@interface CalculatorNumberFormatter : NSNumberFormatter
 @end
 
 @interface DisplayView (CalculatorHistory)
@@ -38,4 +40,18 @@
 @property (nonatomic, strong) CCUnitConversionDisplayView *unitConversionDisplayView;
 @property (nonatomic, assign) BOOL isUnitConversionMode;
 - (void)_presentConversionViewController;
+@end
+
+@interface DisplayValue (CalculatorConverter)
+- (instancetype)initWithValue:(NSString *)value userEntered:(BOOL)userEntered;
+- (NSString *)valueString;
+- (BOOL)isUserEntered;
+@end
+
+@interface CalculatorNumberFormatter (CalculatorConverter)
+- (instancetype)initWithMaximumDigitCount:(NSUInteger)maximumDigitCount;
+@end
+
+@interface CalculatorController (CalculatorConverter)
+- (void)setDisplayValue:(DisplayValue *)displayValue shouldFlashDisplay:(BOOL)shouldFlashDisplay;
 @end

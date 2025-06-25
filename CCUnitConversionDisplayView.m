@@ -1,8 +1,9 @@
 #import "CCUnitConversionDisplayView.h"
+#import "CCConversionViewController.h"
+#import "CCUnitConversionDataProvider.h"
 #import "Tweak.h"
 
 @implementation CCUnitConversionDisplayView
-
 - (instancetype)init {
     self = [super init];
 
@@ -13,15 +14,13 @@
     return self;
 }
 
-- (void)setActiveInputValue:(NSNumber *)value {
-    [self.activeUnitDisplayView updateDisplayValue:value]; 
+- (void)didUpdateDisplayValue:(DisplayValue *)displayValue {
+    CCUnitConversionDirection direction = [self.activeUnitDisplayView.accessibilityIdentifier isEqualToString:@"inputUnitDisplayView"];
+    NSLog(@"Updating display value: %@, direction: %ld", displayValue.accessibilityStringValue, (long)direction);
 
-    NSNumber *convertedValue = [[CCUnitConversionDataProvider sharedInstance] convertValue:value];
-    if ([self.activeUnitDisplayView.accessibilityIdentifier isEqualToString:@"inputUnitDisplayView"]) {
-        [_resultUnitSelectionDisplayView updateDisplayValue:convertedValue];
-    } else {
-        [_inputUnitSelectionDisplayView updateDisplayValue:convertedValue];
-    }
+    DisplayValue *convertedValue = [[CCUnitConversionDataProvider sharedInstance] convertDisplayValue:displayValue direction:direction];
+    [self.activeUnitDisplayView updateDisplayValue:displayValue];
+    [self.otherUnitDisplayView updateDisplayValue:convertedValue];
 }
 
 - (void)_setupSubviews {
@@ -107,6 +106,14 @@
 	UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
 	nav.modalPresentationStyle = UIModalPresentationFormSheet;
 	[((UIView *)self).window.rootViewController presentViewController:nav animated:YES completion:nil];
+}
+
+- (CCUnitSelectionDisplayView *)otherUnitDisplayView {
+    if ([self.activeUnitDisplayView.accessibilityIdentifier isEqualToString:@"inputUnitDisplayView"]) {
+        return _resultUnitSelectionDisplayView;
+    } else {
+        return _inputUnitSelectionDisplayView;
+    }
 }
 
 @end
