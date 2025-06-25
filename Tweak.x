@@ -90,55 +90,10 @@
 
 		UIMenuController *menuController = [UIMenuController sharedMenuController];
 		UILabel *displayLabel = displayView.unitConversionDisplayView.activeUnitDisplayView.displayLabel;
-		NSLog(@"displayLabel: %@", displayLabel);
-		NSLog(@"displayLabel bounds: %@", NSStringFromCGRect(displayLabel.bounds));
-
-		CGRect effectiveBounds = [displayLabel effectiveTextBounds];
-		CGRect finalFrame = CGRectMake(
-			effectiveBounds.origin.x / 2,
-			displayLabel.frame.origin.y + effectiveBounds.origin.y,
-			effectiveBounds.size.width,
-			effectiveBounds.size.height
-		);
-		// NSLog(@"effectiveBounds: %@", NSStringFromCGRect(effectiveBounds));
-
-		// // CGRect offsetBounds = CGRectOffset(displayLabel.frame, effectiveBounds.origin.x, effectiveBounds.origin.y);
-		// CGRect offsetBounds = CGRectOffset(displayLabel.frame, effectiveBounds.origin.x - displayLabel.bounds.origin.x, effectiveBounds.origin.y - displayLabel.bounds.origin.y);
-		// // NSLog(@"offsetBounds: %@", NSStringFromCGRect(offsetBounds));
-		[menuController showMenuFromView:displayLabel rect:finalFrame];
+		
+		[menuController showMenuFromView:displayLabel rect:[displayLabel effectiveTextBounds]];
 	}
 }
-
-// - (BOOL)becomeFirstResponder {
-// 	DisplayViewController *displayViewController = (DisplayViewController *)self;
-// 	DisplayView *displayView = displayViewController.view;
-// 	if (!displayView.isUnitConversionMode) {
-// 		return %orig;
-// 	}
-
-// 	struct objc_super superInfo = { displayViewController, [displayViewController superclass] };
-// 	BOOL result = ((BOOL (*)(struct objc_super *, SEL))objc_msgSendSuper)(&superInfo, @selector(becomeFirstResponder));
-// 	CCUnitConversionDisplayView *unitConversionDisplayView = displayView.unitConversionDisplayView;
-
-// 	if (unitConversionDisplayView.highlighted) {
-// 		if (unitConversionDisplayView.highlightOverlayView) return result;
-// 		CGRect effectiveBounds = [unitConversionDisplayView.activeUnitDisplayView.displayLabel effectiveTextBounds];
-
-// 		CGRect tmpFrame1 = CGRectOffset(unitConversionDisplayView.activeUnitDisplayView.displayLabel.frame, effectiveBounds.origin.x, effectiveBounds.origin.y);
-// 		CGRect tmpFrame2 = [unitConversionDisplayView convertRect:tmpFrame1 fromCoordinateSpace:unitConversionDisplayView.activeUnitDisplayView];
-
-// 		NSLog(@"effectiveBounds: %@", NSStringFromCGRect(effectiveBounds));
-// 		NSLog(@"tmpFrame1: %@", NSStringFromCGRect(tmpFrame1));
-// 		NSLog(@"tmpFrame2: %@", NSStringFromCGRect(tmpFrame2));
-// 	}
-
-// 	if (!unitConversionDisplayView.highlightOverlayView) return result;
-// 	[unitConversionDisplayView.highlightOverlayView removeFromSuperview];
-
-
-
-// 	return result;
-// }
 
 - (void)copy:(id)sender {
 	DisplayView *displayView = ((DisplayViewController *)self).view;
@@ -158,19 +113,6 @@
 %end
 
 %hook CalculatorController
-
-// static void (*orig_didUpdateDisplayValue_ptr)(id, SEL, id, DisplayValue *, BOOL) = NULL;
-
-%new
-- (void)setDisplayValue:(DisplayValue *)displayValue shouldFlashDisplay:(BOOL)shouldFlashDisplay {
-    CalculatorModel *model = (CalculatorModel *)[self getSwiftIvar:@"model"];
-    if (!model) {
-        NSLog(@"[Tweak] CalculatorModel not found in CalculatorController.");
-        return;
-    }
-
-	[self calculatorModel:model didUpdateDisplayValue:displayValue shouldFlashDisplay:shouldFlashDisplay];
-}
 
 - (void)calculatorModel:(id)calculatorModel didUpdateDisplayValue:(DisplayValue *)displayValue shouldFlashDisplay:(BOOL)shouldFlashDisplay {
 	%orig;

@@ -51,7 +51,3 @@
 @interface CalculatorNumberFormatter (CalculatorConverter)
 - (instancetype)initWithMaximumDigitCount:(NSUInteger)maximumDigitCount;
 @end
-
-@interface CalculatorController (CalculatorConverter)
-- (void)setDisplayValue:(DisplayValue *)displayValue shouldFlashDisplay:(BOOL)shouldFlashDisplay;
-@end
