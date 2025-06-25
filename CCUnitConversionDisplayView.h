@@ -13,7 +13,6 @@
 }
 @property (nonatomic, strong) CCUnitSelectionDisplayView *activeUnitDisplayView;
 @property (nonatomic, strong) UIView *highlightOverlayView;
-@property (nonatomic, assign) BOOL highlighted;
 
 - (CCUnitSelectionDisplayView *)otherUnitDisplayView;
 - (void)didUpdateDisplayValue:(DisplayValue *)value;
