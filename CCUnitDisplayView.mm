@@ -1,10 +1,10 @@
-#import "CCUnitSelectionDisplayView.h"
-#import "CCUnitConversionDataProvider.h"
+#import "CCUnitDisplayView.h"
+#import "CCUnitDataProvider.h"
 #import "Tweak.h"
 #import <objc/runtime.h>
 #import <substrate.h>
 
-@implementation CCUnitSelectionDisplayView
+@implementation CCUnitDisplayView
 
 - (instancetype)init {
     self = [super init];
@@ -29,9 +29,9 @@
 - (void)updateDisplayValue:(DisplayValue *)value {
     self.displayValue = value;
 
-    CCUnitConversionDataProvider *provider = [CCUnitConversionDataProvider sharedInstance];
+    CCUnitDataProvider *provider = [CCUnitDataProvider sharedInstance];
     NSNumber *numberValue = [provider.numberFormatter numberFromString:[value accessibilityStringValue]];
-    // NSNumberFormatter *numberFormatter = [CCUnitConversionDataProvider sharedInstance].numberFormatter;
+    // NSNumberFormatter *numberFormatter = [CCUnitDataProvider sharedInstance].numberFormatter;
     NSString *displayText = [provider.numberFormatter stringFromNumber:numberValue];
     if ([[provider unitForID:provider.inputUnitID].category isCurrency]) {
         provider.numberFormatter.numberStyle = NSNumberFormatterCurrencyStyle;
@@ -97,7 +97,7 @@
 
     CalculatorController *controller = [(id)([UIApplication sharedApplication].delegate) getSwiftIvar:@"controller"];
     if (!controller) {
-        NSLog(@"[CCUnitSelectionDisplayView] CalculatorController not found in app delegate.");
+        NSLog(@"[CCUnitDisplayView] CalculatorController not found in app delegate.");
         return;
     }
 
@@ -106,6 +106,8 @@
         NSLog(@"[Tweak] CalculatorModel not found in CalculatorController.");
         return;
     }
+
+    // Makes it so that the display value destroys whatever is in the stack
     MSHookIvar<BOOL>(model, "equalsKeyPressed") = YES;
 
     [controller calculatorModel:model didUpdateDisplayValue:self.displayValue shouldFlashDisplay:NO];

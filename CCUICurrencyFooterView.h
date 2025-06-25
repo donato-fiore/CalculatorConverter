@@ -1,6 +1,6 @@
 #import <UIKit/UIKit.h>
 
-@interface CCUIFooterView : UIView {
+@interface CCUICurrencyFooterView : UIView {
     UIImageView *_logoImageView;
     UILabel *_lastUpdatedLabel;
     NSDate *_lastUpdatedDate;

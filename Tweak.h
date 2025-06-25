@@ -2,7 +2,7 @@
 #import <UIKit/UIKit.h>
 #import <Extensions/Extensions.h>
 
-#import "CCUnitConversionDisplayView.h"
+#import "CCConversionDisplayView.h"
 
 @interface UIView (Private)
 - (UIViewController *)_viewControllerForAncestor;
@@ -37,7 +37,7 @@
 @end
 
 @interface DisplayView (CalculatorUnitConversion)
-@property (nonatomic, strong) CCUnitConversionDisplayView *unitConversionDisplayView;
+@property (nonatomic, strong) CCConversionDisplayView *unitConversionDisplayView;
 @property (nonatomic, assign) BOOL isUnitConversionMode;
 - (void)_presentConversionViewController;
 @end

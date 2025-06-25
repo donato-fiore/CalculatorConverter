@@ -1,7 +1,7 @@
-#import "CCConversionViewController.h"
+#import "CCUnitSelectionViewController.h"
 #import "Tweak.h"
 
-@implementation CCConversionViewController
+@implementation CCUnitSelectionViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -72,7 +72,7 @@
     _unitTableView.backgroundColor = [UIColor systemBackgroundColor];
     [self.view addSubview:_unitTableView];
 
-    _currencyFooterView = [[CCUIFooterView alloc] initWithLastUpdatedDate:[[CurrencyCache shared] lastRefreshDate]];
+    _currencyFooterView = [[CCUICurrencyFooterView alloc] initWithLastUpdatedDate:[[CurrencyCache shared] lastRefreshDate]];
     _currencyFooterView.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:_currencyFooterView];
 
@@ -93,7 +93,7 @@
 }
 
 - (void)_initializeButtons {
-    CCUnitConversionDataProvider *provider = [CCUnitConversionDataProvider sharedInstance];
+    CCUnitDataProvider *provider = [CCUnitDataProvider sharedInstance];
     for (CalculateUnitCategory *category in provider.unitCollection.categories) {
         UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
         button.tag = category.categoryID;
@@ -138,7 +138,7 @@
     sender.selected = YES;
     sender.backgroundColor = [UIColor systemOrangeColor];
 
-    [CCUnitConversionDataProvider sharedInstance].categoryID = sender.tag;
+    [CCUnitDataProvider sharedInstance].categoryID = sender.tag;
 
     [self _updateFooterConstraints];
     [_unitTableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
@@ -146,7 +146,7 @@
 }
 
 - (void)_updateFooterConstraints {
-    if ([CCUnitConversionDataProvider sharedInstance].categoryID == [CCUnitConversionDataProvider sharedInstance].currencyCategory.categoryID) {
+    if ([CCUnitDataProvider sharedInstance].categoryID == [CCUnitDataProvider sharedInstance].currencyCategory.categoryID) {
         _currencyFooterView.hidden = NO;
         _tableViewBottomToFooterConstraint.active = YES;
         _tableViewBottomToViewConstraint.active = NO;
@@ -161,7 +161,7 @@
 #pragma mark - UITableViewDataSource
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    CalculateUnitCategory *selectedCategory = [[CCUnitConversionDataProvider sharedInstance] categoryForID:[CCUnitConversionDataProvider sharedInstance].categoryID];
+    CalculateUnitCategory *selectedCategory = [[CCUnitDataProvider sharedInstance] categoryForID:[CCUnitDataProvider sharedInstance].categoryID];
     return selectedCategory.units.count;
 }
 
@@ -172,7 +172,7 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"UnitCell"];
     }
 
-    CalculateUnitCategory *selectedCategory = [[CCUnitConversionDataProvider sharedInstance] categoryForID:[CCUnitConversionDataProvider sharedInstance].categoryID];
+    CalculateUnitCategory *selectedCategory = [[CCUnitDataProvider sharedInstance] categoryForID:[CCUnitDataProvider sharedInstance].categoryID];
     CalculateUnit *unit = selectedCategory.units[indexPath.row];
 
     cell.accessoryType = UITableViewCellAccessoryNone;
@@ -187,11 +187,11 @@
     BOOL isInput = [self.stagedUnitType isEqualToString:@"editingInputUnit"];
     NSUInteger selectedID, otherID;
     if (isInput) {
-        selectedID = [CCUnitConversionDataProvider sharedInstance].inputUnitID;
-        otherID = [CCUnitConversionDataProvider sharedInstance].resultUnitID;
+        selectedID = [CCUnitDataProvider sharedInstance].inputUnitID;
+        otherID = [CCUnitDataProvider sharedInstance].resultUnitID;
     } else {
-        selectedID = [CCUnitConversionDataProvider sharedInstance].resultUnitID;
-        otherID = [CCUnitConversionDataProvider sharedInstance].inputUnitID;
+        selectedID = [CCUnitDataProvider sharedInstance].resultUnitID;
+        otherID = [CCUnitDataProvider sharedInstance].inputUnitID;
     }
 
     if (unit.unitID == selectedID) {
@@ -213,7 +213,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 
-    CCUnitConversionDataProvider *provider = [CCUnitConversionDataProvider sharedInstance];
+    CCUnitDataProvider *provider = [CCUnitDataProvider sharedInstance];
     CalculateUnitCategory *selectedCategory = [provider categoryForID:provider.categoryID];
     CalculateUnit *unit = selectedCategory.units[indexPath.row];
     [provider addRecentUnit:unit];

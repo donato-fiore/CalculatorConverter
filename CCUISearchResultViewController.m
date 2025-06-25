@@ -1,6 +1,6 @@
 #import "CCUISearchResultViewController.h"
-#import "CCUnitConversionDataProvider.h"
-#import "CCConversionViewController.h"
+#import "CCUnitDataProvider.h"
+#import "CCUnitSelectionViewController.h"
 
 @implementation CCUISearchResultViewController
 @synthesize searchText = _searchText;
@@ -23,7 +23,7 @@
     CalculateUnit *unit;
 
     if (_searchText.length == 0) {
-        unit = [CCUnitConversionDataProvider sharedInstance].recentUnits[indexPath.row];
+        unit = [CCUnitDataProvider sharedInstance].recentUnits[indexPath.row];
     } else {
         CalculateUnitCategory *category = [self _filteredUnits][indexPath.section];
         unit = category.units[indexPath.row];
@@ -35,9 +35,9 @@
     BOOL isInput = [[self _conversionViewController].stagedUnitType isEqualToString:@"editingInputUnit"];
     NSUInteger otherID;
     if (isInput) {
-        otherID = [CCUnitConversionDataProvider sharedInstance].resultUnitID;
+        otherID = [CCUnitDataProvider sharedInstance].resultUnitID;
     } else {
-        otherID = [CCUnitConversionDataProvider sharedInstance].inputUnitID;
+        otherID = [CCUnitDataProvider sharedInstance].inputUnitID;
     }
 
     if (unit.unitID == otherID) {
@@ -54,7 +54,7 @@
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 
     CalculateUnit *selectedUnit;
-    CCUnitConversionDataProvider *provider = [CCUnitConversionDataProvider sharedInstance];
+    CCUnitDataProvider *provider = [CCUnitDataProvider sharedInstance];
     BOOL isInput = [[self _conversionViewController].stagedUnitType isEqualToString:@"editingInputUnit"];
     if (_searchText.length == 0) {
         selectedUnit = provider.recentUnits[indexPath.row];
@@ -116,7 +116,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section;
 {
     if (_searchText.length == 0) {
-        return [CCUnitConversionDataProvider sharedInstance].recentUnits.count;
+        return [CCUnitDataProvider sharedInstance].recentUnits.count;
     }
 
     return [self _filteredUnits][section].units.count;
@@ -145,19 +145,19 @@
 }
 
 - (void)_clearRecentUnits {
-    [[CCUnitConversionDataProvider sharedInstance] clearRecentUnits];
+    [[CCUnitDataProvider sharedInstance] clearRecentUnits];
     [self.tableView reloadData];
 }
 
-- (CCConversionViewController *)_conversionViewController {
-    return (CCConversionViewController *)self.presentingViewController;
+- (CCUnitSelectionViewController *)_conversionViewController {
+    return (CCUnitSelectionViewController *)self.presentingViewController;
 }
 
 - (NSArray<CalculateUnitCategory *> *)_filteredUnits {
     if (_searchText.length == 0) return nil;
 
     NSMutableArray *filteredUnits = [NSMutableArray array];
-    for (CalculateUnitCategory *category in [CCUnitConversionDataProvider sharedInstance].unitCollection.categories) {
+    for (CalculateUnitCategory *category in [CCUnitDataProvider sharedInstance].unitCollection.categories) {
         CalculateUnitCategory *filteredCategory = [category filteredUnitsMatchingString:_searchText];
         if (filteredCategory && filteredCategory.units.count > 0) {
             [filteredUnits addObject:filteredCategory];

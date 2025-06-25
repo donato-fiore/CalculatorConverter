@@ -1,13 +1,13 @@
 #import <UIKit/UIKit.h>
-#import "CCUIFooterView.h"
+#import "CCUICurrencyFooterView.h"
 #import "CCUISearchResultViewController.h"
 
-@interface CCConversionViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, UISearchResultsUpdating, UISearchBarDelegate> {
+@interface CCUnitSelectionViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, UISearchResultsUpdating, UISearchBarDelegate> {
     UISearchController *_searchController;
     UIScrollView *_categoryScrollView;
     UIStackView *_categoryStackView;
     UITableView *_unitTableView;
-    CCUIFooterView *_currencyFooterView;
+    CCUICurrencyFooterView *_currencyFooterView;
 
     CCUISearchResultViewController *_resultsViewController;
 

@@ -1,11 +1,11 @@
-#import "CCUnitConversionDataProvider.h"
+#import "CCUnitDataProvider.h"
 #import "Tweak.h"
 #import <objc/runtime.h>
 
-@implementation CCUnitConversionDataProvider
+@implementation CCUnitDataProvider
 
 + (instancetype)sharedInstance {
-    static CCUnitConversionDataProvider *sharedInstance = nil;
+    static CCUnitDataProvider *sharedInstance = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         sharedInstance = [[self alloc] init];

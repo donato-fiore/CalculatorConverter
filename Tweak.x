@@ -1,19 +1,12 @@
 #import "Tweak.h"
 #import <objc/runtime.h>
 #import <dlfcn.h>
-// 
-// #import "CCConversionViewController.h"
-// #import "CCUnitConversionDataProvider.h"
-// #import "CCUIFooterView.h"
-
-// #import "CalculateUnits/CalculateUnits.h"
-
 
 %hook DisplayView
 %property (nonatomic, strong) UINavigationBar *navigationBar;
 %property (nonatomic, strong) UINavigationItem *navigationItem;
 %property (nonatomic, assign) BOOL isUnitConversionMode;
-%property (nonatomic, strong) CCUnitConversionDisplayView *unitConversionDisplayView;
+%property (nonatomic, strong) CCConversionDisplayView *unitConversionDisplayView;
 
 - (void)didMoveToSuperview {
 	%orig;
@@ -38,7 +31,7 @@
 	conversionButton.tintColor = [UIColor systemOrangeColor];
 	[displayView.navigationItem setRightBarButtonItem:conversionButton animated:NO];
 
-	displayView.unitConversionDisplayView = [[CCUnitConversionDisplayView alloc] init];
+	displayView.unitConversionDisplayView = [[CCConversionDisplayView alloc] init];
 	displayView.unitConversionDisplayView.translatesAutoresizingMaskIntoConstraints = NO;
 	displayView.unitConversionDisplayView.hidden = YES;
 

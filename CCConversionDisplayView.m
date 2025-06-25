@@ -1,9 +1,9 @@
-#import "CCUnitConversionDisplayView.h"
-#import "CCConversionViewController.h"
-#import "CCUnitConversionDataProvider.h"
+#import "CCConversionDisplayView.h"
+#import "CCUnitSelectionViewController.h"
+#import "CCUnitDataProvider.h"
 #import "Tweak.h"
 
-@implementation CCUnitConversionDisplayView
+@implementation CCConversionDisplayView
 - (instancetype)init {
     self = [super init];
 
@@ -18,7 +18,7 @@
     CCUnitConversionDirection direction = [self.activeUnitDisplayView.accessibilityIdentifier isEqualToString:@"inputUnitDisplayView"];
     NSLog(@"Updating display value: %@, direction: %ld", displayValue.accessibilityStringValue, (long)direction);
 
-    DisplayValue *convertedValue = [[CCUnitConversionDataProvider sharedInstance] convertDisplayValue:displayValue direction:direction];
+    DisplayValue *convertedValue = [[CCUnitDataProvider sharedInstance] convertDisplayValue:displayValue direction:direction];
     [self.activeUnitDisplayView updateDisplayValue:displayValue];
     [self.otherUnitDisplayView updateDisplayValue:convertedValue];
 }
@@ -37,14 +37,14 @@
     _dividerView.backgroundColor = [[UIColor systemGrayColor] colorWithAlphaComponent:0.5];
     [self addSubview:_dividerView];
 
-    _inputUnitSelectionDisplayView = [[CCUnitSelectionDisplayView alloc] init];
+    _inputUnitSelectionDisplayView = [[CCUnitDisplayView alloc] init];
     _inputUnitSelectionDisplayView.accessibilityIdentifier = @"inputUnitDisplayView";
     [_inputUnitSelectionDisplayView.changeUnitButton addTarget:self action:@selector(changeUnit:) forControlEvents:UIControlEventTouchUpInside];
     _inputUnitSelectionDisplayView.changeUnitButton.accessibilityIdentifier = @"editingInputUnit";
     _inputUnitSelectionDisplayView.translatesAutoresizingMaskIntoConstraints = NO;
     [self addSubview:_inputUnitSelectionDisplayView];
 
-    _resultUnitSelectionDisplayView = [[CCUnitSelectionDisplayView alloc] init];
+    _resultUnitSelectionDisplayView = [[CCUnitDisplayView alloc] init];
     _resultUnitSelectionDisplayView.accessibilityIdentifier = @"resultUnitDisplayView";
     [_resultUnitSelectionDisplayView.changeUnitButton addTarget:self action:@selector(changeUnit:) forControlEvents:UIControlEventTouchUpInside];
     _resultUnitSelectionDisplayView.changeUnitButton.accessibilityIdentifier = @"editingResultUnit";
@@ -81,7 +81,7 @@
 }
 
 - (void)updateButtonTitles {
-    CCUnitConversionDataProvider *provider = [CCUnitConversionDataProvider sharedInstance];
+    CCUnitDataProvider *provider = [CCUnitDataProvider sharedInstance];
 
     NSString *inputUnitStr = [provider unitForID:provider.inputUnitID].shortName;
     [_inputUnitSelectionDisplayView.changeUnitButton setTitle:inputUnitStr forState:UIControlStateNormal];
@@ -101,14 +101,14 @@
 }
 
 - (void)changeUnit:(UIButton *)sender {
-    CCConversionViewController *vc = [[CCConversionViewController alloc] init];
+    CCUnitSelectionViewController *vc = [[CCUnitSelectionViewController alloc] init];
     vc.stagedUnitType = sender.accessibilityIdentifier;
 	UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
 	nav.modalPresentationStyle = UIModalPresentationFormSheet;
 	[((UIView *)self).window.rootViewController presentViewController:nav animated:YES completion:nil];
 }
 
-- (CCUnitSelectionDisplayView *)otherUnitDisplayView {
+- (CCUnitDisplayView *)otherUnitDisplayView {
     if ([self.activeUnitDisplayView.accessibilityIdentifier isEqualToString:@"inputUnitDisplayView"]) {
         return _resultUnitSelectionDisplayView;
     } else {

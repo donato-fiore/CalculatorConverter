@@ -1,6 +1,6 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import "CCUnitConversionDataProvider.h"
+#import "CCUnitDataProvider.h"
 
 @interface CCUISearchResultViewController : UITableViewController <UITableViewDataSource, UITableViewDelegate> {
     NSString *_searchText;

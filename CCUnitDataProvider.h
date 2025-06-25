@@ -10,7 +10,7 @@ typedef NS_ENUM(bool, CCUnitConversionDirection) {
     CCUnitConversionDirectionResultToInput = NO
 };
 
-@interface CCUnitConversionDataProvider : NSObject {
+@interface CCUnitDataProvider : NSObject {
     Converter *_converter;
 }
 @property (nonatomic, strong) CalculatorNumberFormatter *numberFormatter;
@@ -24,8 +24,6 @@ typedef NS_ENUM(bool, CCUnitConversionDirection) {
 + (instancetype)sharedInstance;
 - (void)addRecentUnit:(CalculateUnit *)unit;
 - (void)clearRecentUnits;
-// - (NSNumber *)convertValue:(NSNumber *)value;
-// - (DisplayValue *)convertDisplayValue:(DisplayValue *)value;
 - (DisplayValue *)convertDisplayValue:(DisplayValue *)value direction:(CCUnitConversionDirection)direction;
 - (CalculateUnitCategory *)categoryForID:(NSInteger)categoryID;
 - (CalculateUnitCategory *)currencyCategory;

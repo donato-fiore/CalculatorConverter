@@ -1,6 +1,6 @@
-#import "CCUIFooterView.h"
+#import "CCUICurrencyFooterView.h"
 
-@implementation CCUIFooterView
+@implementation CCUICurrencyFooterView
 
 - (instancetype)initWithLastUpdatedDate:(NSDate *)date {
     self = [super init];
@@ -40,13 +40,13 @@
 - (UIImage *)yahooFinanceLogoImage {
     NSBundle *stocksCoreBundle = [NSBundle bundleWithPath:@"/System/Library/PrivateFrameworks/StocksCore.framework"];
     if (!stocksCoreBundle) {
-        NSLog(@"[CCUIFooterView] Failed to load StocksCore framework bundle.");
+        NSLog(@"[CCUICurrencyFooterView] Failed to load StocksCore framework bundle.");
         return nil;
     }
 
     UIImage *logoImage = [UIImage imageNamed:@"icon-yahoo-logo" inBundle:stocksCoreBundle compatibleWithTraitCollection:nil];
     if (!logoImage) {
-        NSLog(@"[CCUIFooterView] Failed to load Yahoo Finance logo image.");
+        NSLog(@"[CCUICurrencyFooterView] Failed to load Yahoo Finance logo image.");
     }
 
     return logoImage;
