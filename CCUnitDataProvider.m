@@ -22,7 +22,7 @@
             NSLog(@"[CCUnitDataProvider] CalculatorController not found in app delegate.");
         }
 
-        _calculatorModel = (CalculatorModel *)[controller getSwiftIvar:@"model"];
+        _calculatorModel = (CalculatorModel *)[_calculatorController getSwiftIvar:@"model"];
         if (!_calculatorModel) {
             NSLog(@"[CCUnitDataProvider] CalculatorModel not found in CalculatorController.");
         }
