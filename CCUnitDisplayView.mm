@@ -68,7 +68,7 @@
     [_displayLabel setContentHuggingPriority:UILayoutPriorityDefaultLow forAxis:UILayoutConstraintAxisHorizontal];
     _displayLabel.lineBreakMode = NSLineBreakByClipping;
     _displayLabel.font = [UIFont systemFontOfSize:80 weight:UIFontWeightThin];
-    _displayLabel.text = @"0";
+    // _displayLabel.text = @"0";
     [self addSubview:_displayLabel];
 
     [NSLayoutConstraint activateConstraints:@[
@@ -95,17 +95,8 @@
     displayVC.view.unitConversionDisplayView.activeUnitDisplayView = self;
     [displayVC.view.unitConversionDisplayView updateDisplayLabelColors];
 
-    CalculatorController *controller = [(id)([UIApplication sharedApplication].delegate) getSwiftIvar:@"controller"];
-    if (!controller) {
-        NSLog(@"[CCUnitDisplayView] CalculatorController not found in app delegate.");
-        return;
-    }
-
-    CalculatorModel *model = (CalculatorModel *)[controller getSwiftIvar:@"model"];
-    if (!model) {
-        NSLog(@"[Tweak] CalculatorModel not found in CalculatorController.");
-        return;
-    }
+    CalculatorController *controller = [CCUnitDataProvider sharedInstance].calculatorController;
+    CalculatorModel *model = controller.calculatorModel;
 
     // Makes it so that the display value destroys whatever is in the stack
     MSHookIvar<BOOL>(model, "equalsKeyPressed") = YES;
