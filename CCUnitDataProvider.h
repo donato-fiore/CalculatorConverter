@@ -3,7 +3,7 @@
 #import <Calculate/CurrencyCache.h>
 #import "CalculateUnits/CalculateUnits.h"
 
-@class CalculatorNumberFormatter, DisplayValue;
+@class CalculatorNumberFormatter, DisplayValue, CalculatorModel, CalculatorController;
 
 typedef NS_ENUM(bool, CCUnitConversionDirection) {
     CCUnitConversionDirectionInputToResult = YES,
@@ -12,6 +12,8 @@ typedef NS_ENUM(bool, CCUnitConversionDirection) {
 
 @interface CCUnitDataProvider : NSObject {
     Converter *_converter;
+    CalculatorModel *_calculatorModel;
+    CalculatorController *_calculatorController;
 }
 @property (nonatomic, strong) CalculatorNumberFormatter *numberFormatter;
 @property (nonatomic, strong) CalculateUnitCollection *unitCollection;
@@ -20,6 +22,8 @@ typedef NS_ENUM(bool, CCUnitConversionDirection) {
 @property (nonatomic, assign) NSUInteger inputUnitID;
 @property (nonatomic, assign) NSUInteger resultUnitID;
 @property (nonatomic, assign) NSUInteger categoryID;
+@property (nonatomic, readonly) CalculatorModel *calculatorModel;
+@property (nonatomic, readonly) CalculatorController *calculatorController;
 
 + (instancetype)sharedInstance;
 - (void)addRecentUnit:(CalculateUnit *)unit;

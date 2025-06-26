@@ -17,6 +17,16 @@
     self = [super init];
 
     if (self) {
+        _calculatorController = [(id)([UIApplication sharedApplication].delegate) getSwiftIvar:@"controller"];
+        if (!_calculatorController) {
+            NSLog(@"[CCUnitDataProvider] CalculatorController not found in app delegate.");
+        }
+
+        _calculatorModel = (CalculatorModel *)[controller getSwiftIvar:@"model"];
+        if (!_calculatorModel) {
+            NSLog(@"[CCUnitDataProvider] CalculatorModel not found in CalculatorController.");
+        }
+
         self.calculateFrameworkBundle = [NSBundle bundleWithPath:@"/System/Library/PrivateFrameworks/Calculate.framework"];
         if (!self.calculateFrameworkBundle) {
             NSLog(@"[UnitConversionDataProvider] Could not load Calculate framework bundle.");
