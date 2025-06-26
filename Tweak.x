@@ -1,6 +1,7 @@
 #import "Tweak.h"
 #import <objc/runtime.h>
 #import <dlfcn.h>
+#import "CCUnitDataProvider.h"
 
 %hook DisplayView
 %property (nonatomic, strong) UINavigationBar *navigationBar;
@@ -27,43 +28,44 @@
 	}
 
 	UIImage *conversionImage = [UIImage calc_systemImageNamed:@"arrow.up.arrow.down"];
-	UIBarButtonItem *conversionButton = [[UIBarButtonItem alloc] initWithImage:conversionImage style:UIBarButtonItemStylePlain target:self action:@selector(_changeUnitConversionMode)];
+	UIBarButtonItem *conversionButton = [[UIBarButtonItem alloc] initWithImage:conversionImage style:UIBarButtonItemStylePlain target:self action:@selector(_calculatorConverterButtonTapped)];
 	conversionButton.tintColor = [UIColor systemOrangeColor];
 	[displayView.navigationItem setRightBarButtonItem:conversionButton animated:NO];
 
-	displayView.unitConversionDisplayView = [[CCConversionDisplayView alloc] init];
-	displayView.unitConversionDisplayView.translatesAutoresizingMaskIntoConstraints = NO;
-	displayView.unitConversionDisplayView.hidden = YES;
-
-	[displayView addSubview:displayView.unitConversionDisplayView];
-	[NSLayoutConstraint activateConstraints:@[
-		[displayView.unitConversionDisplayView.leadingAnchor constraintEqualToAnchor:displayView.leadingAnchor],
-		[displayView.unitConversionDisplayView.trailingAnchor constraintEqualToAnchor:displayView.trailingAnchor],
-		[displayView.unitConversionDisplayView.topAnchor constraintEqualToAnchor:displayView.navigationBar.bottomAnchor],
-		[displayView.unitConversionDisplayView.bottomAnchor constraintEqualToAnchor:displayView.bottomAnchor]
-	]];
+	[CCUnitDataProvider sharedInstance];
 }
 
 %new
-- (void)_changeUnitConversionMode {
+- (void)_calculatorConverterButtonTapped {
 	DisplayView *displayView = self;
-
 	displayView.isUnitConversionMode = !displayView.isUnitConversionMode;
 
 	if (displayView.isUnitConversionMode) {
+		if (!displayView.unitConversionDisplayView) {
+			displayView.unitConversionDisplayView = [[CCConversionDisplayView alloc] init];
+			displayView.unitConversionDisplayView.translatesAutoresizingMaskIntoConstraints = NO;
+
+			[displayView addSubview:displayView.unitConversionDisplayView];
+			[NSLayoutConstraint activateConstraints:@[
+				[displayView.unitConversionDisplayView.leadingAnchor constraintEqualToAnchor:displayView.leadingAnchor],
+				[displayView.unitConversionDisplayView.trailingAnchor constraintEqualToAnchor:displayView.trailingAnchor],
+				[displayView.unitConversionDisplayView.topAnchor constraintEqualToAnchor:displayView.navigationBar.bottomAnchor],
+				[displayView.unitConversionDisplayView.bottomAnchor constraintEqualToAnchor:displayView.bottomAnchor]
+			]];
+		}
+
 		UIImage *cancelImage = [UIImage calc_systemImageNamed:@"xmark.circle.fill"];
-		UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithImage:cancelImage style:UIBarButtonItemStylePlain target:self action:@selector(_changeUnitConversionMode)];
+		UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithImage:cancelImage style:UIBarButtonItemStylePlain target:self action:@selector(_calculatorConverterButtonTapped)];
 		cancelButton.tintColor = [UIColor systemOrangeColor];
 		[displayView.navigationItem setRightBarButtonItem:cancelButton animated:NO];
-
-		displayView.unitConversionDisplayView.hidden = NO;
 	} else {
+		[displayView.unitConversionDisplayView removeFromSuperview];
+		displayView.unitConversionDisplayView = nil;
+
 		UIImage *conversionImage = [UIImage calc_systemImageNamed:@"arrow.up.arrow.down"];
-		UIBarButtonItem *conversionButton = [[UIBarButtonItem alloc] initWithImage:conversionImage style:UIBarButtonItemStylePlain target:self action:@selector(_changeUnitConversionMode)];
+		UIBarButtonItem *conversionButton = [[UIBarButtonItem alloc] initWithImage:conversionImage style:UIBarButtonItemStylePlain target:self action:@selector(_calculatorConverterButtonTapped)];
 		conversionButton.tintColor = [UIColor systemOrangeColor];
 		[displayView.navigationItem setRightBarButtonItem:conversionButton animated:NO];
-		
-		displayView.unitConversionDisplayView.hidden = YES;
 	}
 }
 
