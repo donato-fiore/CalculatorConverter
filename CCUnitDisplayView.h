@@ -7,6 +7,7 @@
 @property (nonatomic, strong) UIButton *changeUnitButton;
 @property (nonatomic, strong) UILabel *displayLabel;
 
+- (instancetype)initWithDisplayValue:(DisplayValue *)displayValue;
 - (void)updateDisplayValue:(DisplayValue *)value;
 
 @end

@@ -6,25 +6,18 @@
 
 @implementation CCUnitDisplayView
 
-- (instancetype)init {
+- (instancetype)initWithDisplayValue:(DisplayValue *)displayValue {
     self = [super init];
     
     if (self) {
-        self.displayValue = [[objc_getClass("Calculator.DisplayValue") alloc] initWithValue:@"0" userEntered:NO];
         [self _setupSubviews];
+        [self updateDisplayValue:displayValue];
     }
+
+    NSLog(@"[CCUnitDisplayView] initialized with display value: %@", displayValue);
     
     return self;
 }
-
-// - (void)updateDisplayValue:(NSNumber *)value {
-//     _value = value;
-//     NSNumberFormatter *formatter = [NSNumberFormatter new];
-//     formatter.numberStyle = NSNumberFormatterDecimalStyle;
-
-//     NSString *formattedInputValue = [formatter stringFromNumber:value];
-//     _displayLabel.text = formattedInputValue;
-// }
 
 - (void)updateDisplayValue:(DisplayValue *)value {
     self.displayValue = value;
@@ -46,7 +39,6 @@
 - (void)_setupSubviews {
     self.changeUnitButton = [[UIButton alloc] init];
     self.changeUnitButton.translatesAutoresizingMaskIntoConstraints = NO;
-    // [self.changeUnitButton setTitle:@"USD" forState:UIControlStateNormal];
     [self.changeUnitButton setImage:[UIImage systemImageNamed:@"chevron.up.chevron.down"] forState:UIControlStateNormal];
     [self.changeUnitButton setTitleColor:[UIColor systemGrayColor] forState:UIControlStateNormal];
     [self.changeUnitButton setTitleColor:[UIColor systemFillColor] forState:UIControlStateHighlighted];
@@ -68,7 +60,6 @@
     [_displayLabel setContentHuggingPriority:UILayoutPriorityDefaultLow forAxis:UILayoutConstraintAxisHorizontal];
     _displayLabel.lineBreakMode = NSLineBreakByClipping;
     _displayLabel.font = [UIFont systemFontOfSize:80 weight:UIFontWeightThin];
-    // _displayLabel.text = @"0";
     [self addSubview:_displayLabel];
 
     [NSLayoutConstraint activateConstraints:@[
@@ -96,7 +87,7 @@
     [displayVC.view.unitConversionDisplayView updateDisplayLabelColors];
 
     CalculatorController *controller = [CCUnitDataProvider sharedInstance].calculatorController;
-    CalculatorModel *model = controller.calculatorModel;
+    CalculatorModel *model = [CCUnitDataProvider sharedInstance].calculatorModel;
 
     // Makes it so that the display value destroys whatever is in the stack
     MSHookIvar<BOOL>(model, "equalsKeyPressed") = YES;
