@@ -2,6 +2,7 @@
 #import "CCUnitSelectionViewController.h"
 #import "CCUnitDataProvider.h"
 #import "Tweak.h"
+#import <substrate.h>
 
 @implementation CCConversionDisplayView
 - (instancetype)init {
@@ -121,16 +122,17 @@
 }
 
 - (void)_swapButtonPressed:(UIButton *)sender {
-    NSLog(@"Swap button pressed");
-    // Get active display value
-    // and then set other display value and perform conversion
     DisplayValue *activeDisplayValue = self.activeUnitDisplayView.displayValue;
-    if (!activeDisplayValue) {
-        NSLog(@"No active display value to swap");
-        return;
-    }
 
-    [[self otherUnitDisplayView] updateDisplayValue:activeDisplayValue];
+    self.activeUnitDisplayView = [self otherUnitDisplayView];
+    [self updateDisplayLabelColors];
+
+    CalculatorController *controller = [CCUnitDataProvider sharedInstance].calculatorController;
+    CalculatorModel *model = [CCUnitDataProvider sharedInstance].calculatorModel;
+
+    MSHookIvar<BOOL>(model, "equalsKeyPressed") = YES;
+
+    [controller calculatorModel:model didUpdateDisplayValue:activeDisplayValue shouldFlashDisplay:NO];
 }
 
 @end
