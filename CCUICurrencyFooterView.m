@@ -1,4 +1,5 @@
 #import "CCUICurrencyFooterView.h"
+#import <UIKit/UIScreen+Private.h>
 
 @implementation CCUICurrencyFooterView
 
@@ -19,16 +20,20 @@
         _lastUpdatedLabel.textAlignment = NSTextAlignmentRight;
         [self addSubview:_lastUpdatedLabel];
 
+        if ([[UIScreen mainScreen] _referenceBounds].size.height <= 735.0) {
+            [_logoImageView.centerYAnchor constraintEqualToAnchor:self.centerYAnchor].active = YES;
+        } else {
+            [_logoImageView.bottomAnchor constraintEqualToAnchor:self.centerYAnchor].active = YES;
+        }
+
         [NSLayoutConstraint activateConstraints:@[
             [_logoImageView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:15],
-            [_logoImageView.bottomAnchor constraintEqualToAnchor:self.centerYAnchor],
             [_logoImageView.heightAnchor constraintEqualToConstant:16],
             [_logoImageView.widthAnchor constraintEqualToConstant:111],
 
-            [_lastUpdatedLabel.bottomAnchor constraintEqualToAnchor:self.centerYAnchor],
+            [_lastUpdatedLabel.centerYAnchor constraintEqualToAnchor:_logoImageView.centerYAnchor],
             [_lastUpdatedLabel.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:-15],
             [_lastUpdatedLabel.leadingAnchor constraintGreaterThanOrEqualToAnchor:_logoImageView.trailingAnchor constant:10]
-
         ]];
         _lastUpdatedDate = date;
         _lastUpdatedLabel.text = [self lastUpdatedText];

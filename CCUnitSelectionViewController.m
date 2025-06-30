@@ -1,5 +1,6 @@
 #import "CCUnitSelectionViewController.h"
 #import "Tweak.h"
+#import <UIKit/UIScreen+Private.h>
 
 @implementation CCUnitSelectionViewController
 
@@ -76,6 +77,9 @@
     _currencyFooterView.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:_currencyFooterView];
 
+    CGFloat footerHeight = 65.0;
+
+    if ([[UIScreen mainScreen] _referenceBounds].size.height <= 735.0) footerHeight = 50.0;
     [NSLayoutConstraint activateConstraints:@[
         [_unitTableView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor],
         [_unitTableView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor],
@@ -84,7 +88,7 @@
         [_currencyFooterView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor],
         [_currencyFooterView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor],
         [_currencyFooterView.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor],
-        [_currencyFooterView.heightAnchor constraintEqualToConstant:65]
+        [_currencyFooterView.heightAnchor constraintEqualToConstant:footerHeight]
     ]];
 
     _tableViewBottomToFooterConstraint = [_unitTableView.bottomAnchor constraintEqualToAnchor:_currencyFooterView.topAnchor];
