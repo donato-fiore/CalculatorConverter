@@ -91,30 +91,25 @@
 
 - (DisplayValue *)convertDisplayValue:(DisplayValue *)value direction:(CCUnitConversionDirection)direction {
     if (!value) {
-        NSLog(@"[UnitConversionDataProvider] Invalid value for conversion: %@", value);
+        NSLog(@"[UnitConversionDataProvider] ERROR nil parameter passed for value.");
         return nil;
     }
 
-    NSUInteger inputUnitID, resultUnitID;
+    CalculateUnit *inputUnit, *resultUnit;
     if (direction == CCUnitConversionDirectionInputToResult) {
-        inputUnitID = [self inputUnitID];
-        resultUnitID = [self resultUnitID];
+        inputUnit = [self unitForID:[self inputUnitID]];
+        resultUnit = [self unitForID:[self resultUnitID]];
     } else {
-        inputUnitID = [self resultUnitID];
-        resultUnitID = [self inputUnitID];
+        inputUnit = [self unitForID:[self resultUnitID]];
+        resultUnit = [self unitForID:[self inputUnitID]];
     }
-
-
-    CalculateUnit *inputUnit = [self unitForID:inputUnitID];
-    CalculateUnit *resultUnit = [self unitForID:resultUnitID];
 
     if (!inputUnit || !resultUnit) {
-        NSLog(@"[UnitConversionDataProvider] Invalid units for conversion: %@ -> %@", inputUnit, resultUnit);
+        NSLog(@"[UnitConversionDataProvider] ERROR invalid unit(s) for conversion: %@ -> %@", inputUnit, resultUnit);
         return nil;
     }
 
-    NSNumber *inputValue = [self.numberFormatter numberFromString:[value accessibilityStringValue]];
-
+    NSNumber *inputValue = [self.numberFormatter numberFromString:[value valueString]];
     if (!inputUnit.category.isCurrency) {
         [_converter setConversionType:inputUnit.name];
         [_converter setInputValue:inputValue];
@@ -133,15 +128,27 @@
         return nil;
     }
 
-    NSLog(@"[UnitConversionDataProvider] Converting currency: %@ -> %@", inputUnit.name, resultUnit.name);
+    NSLog(@"[UnitConversionDataProvider] Converting currency: %@ %@ -> %@", value, inputUnit.name, resultUnit.name);
     NSNumber *inputRate = currencyData[inputUnit.name];
     NSNumber *resultRate = currencyData[resultUnit.name];
+    if (!inputRate || !resultRate) {
+        NSLog(@"[UnitConversionDataProvider] failed to find rate(s) input = %@, result = %@", inputRate, resultRate);
+        return nil;
+    }
 
-    NSLog(@"[UnitConversionDataProvider] Input rate: %@, Result rate: %@", inputRate, resultRate);
+    NSDecimalNumber *inputAmount = [NSDecimalNumber decimalNumberWithDecimal:[inputValue decimalValue]];
+    NSLog(@"[UnitConversionDataProvider] Input amount: %@", inputAmount);
+    if ([inputAmount isEqualToNumber:[NSDecimalNumber notANumber]]) {
+        NSLog(@"[UnitConversionDataProvider] ERROR input amount is NaN");
+        return nil;
+    }
 
-    NSDecimalNumber *inputAmount = [NSDecimalNumber decimalNumberWithString:[value valueString]];
     NSDecimalNumber *inputRateDecimal = [NSDecimalNumber decimalNumberWithDecimal:[inputRate decimalValue]];
     NSDecimalNumber *resultRateDecimal = [NSDecimalNumber decimalNumberWithDecimal:[resultRate decimalValue]];
+    if ([inputRateDecimal isEqualToNumber:[NSDecimalNumber zero]]) {
+        NSLog(@"[UnitConversionDataProvider] ERROR input rate is 0");
+        return nil;
+    }
 
     NSDecimalNumber *rateRatio = [resultRateDecimal decimalNumberByDividingBy:inputRateDecimal];
     NSDecimalNumber *converted = [inputAmount decimalNumberByMultiplyingBy:rateRatio];

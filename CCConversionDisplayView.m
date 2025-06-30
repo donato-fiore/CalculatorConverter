@@ -15,7 +15,7 @@
 }
 
 - (void)didUpdateDisplayValue:(DisplayValue *)displayValue direction:(CCUnitConversionDirection)direction {
-    NSLog(@"Updating display value: %@, direction: %ld", displayValue.accessibilityStringValue, (long)direction);
+    NSLog(@"Updating display value: %@, direction: %ld", displayValue, (long)direction);
 
     DisplayValue *convertedValue = [[CCUnitDataProvider sharedInstance] convertDisplayValue:displayValue direction:direction];
     [self.activeUnitDisplayView updateDisplayValue:displayValue];

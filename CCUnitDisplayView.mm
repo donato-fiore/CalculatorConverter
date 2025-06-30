@@ -23,16 +23,8 @@
     self.displayValue = value;
 
     CCUnitDataProvider *provider = [CCUnitDataProvider sharedInstance];
-    NSNumber *numberValue = [provider.numberFormatter numberFromString:[value accessibilityStringValue]];
-    // NSNumberFormatter *numberFormatter = [CCUnitDataProvider sharedInstance].numberFormatter;
+    NSNumber *numberValue = [provider.numberFormatter numberFromString:[value valueString]];
     NSString *displayText = [provider.numberFormatter stringFromNumber:numberValue];
-    if ([[provider unitForID:provider.inputUnitID].category isCurrency]) {
-        provider.numberFormatter.numberStyle = NSNumberFormatterCurrencyStyle;
-
-        displayText = [provider.numberFormatter stringFromNumber:numberValue];
-
-        provider.numberFormatter.numberStyle = NSNumberFormatterDecimalStyle;
-    }
     _displayLabel.text = displayText;
 }
 
