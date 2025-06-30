@@ -6,4 +6,4 @@ Description: Add iOS 18 unit conversion to the Calculator app.
 Maintainer: fiore
 Author: fiore
 Section: Tweaks
-Depends: mobilesubstrate (>= 0.9.5000)
+Depends: mobilesubstrate
