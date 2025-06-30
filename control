@@ -1,8 +1,8 @@
 Package: com.fiore.calculatorconverter
 Name: CalculatorConverter
-Version: 0.0.1
+Version: 1.0
 Architecture: iphoneos-arm
-Description: An awesome MobileSubstrate tweak!
+Description: Add iOS 18 unit conversion to the Calculator app.
 Maintainer: fiore
 Author: fiore
 Section: Tweaks
