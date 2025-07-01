@@ -166,8 +166,7 @@
 %end
 
 
-__attribute__((constructor))
-static void init_zzz_CalculatorConverter_Tweak(void) {
+%ctor {
 	%init(DisplayView = objc_getClass("Calculator.DisplayView"),
 		  DisplayViewController = objc_getClass("Calculator.DisplayViewController"),
 		  CalculatorController = objc_getClass("Calculator.CalculatorController"));
