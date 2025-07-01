@@ -53,11 +53,20 @@
 				[displayView.unitConversionDisplayView.bottomAnchor constraintEqualToAnchor:displayView.bottomAnchor]
 			]];
 		}
+	}
 
+	[displayView.navigationItem setRightBarButtonItem:[self rightBarButtonItem] animated:NO];
+}
+
+%new
+- (UIBarButtonItem *)rightBarButtonItem {
+	DisplayView *displayView = self;
+
+	if (displayView.isUnitConversionMode) {
 		UIImage *cancelImage = [UIImage calc_systemImageNamed:@"xmark.circle.fill"];
 		UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithImage:cancelImage style:UIBarButtonItemStylePlain target:self action:@selector(_calculatorConverterButtonTapped)];
 		cancelButton.tintColor = [UIColor systemOrangeColor];
-		[displayView.navigationItem setRightBarButtonItem:cancelButton animated:NO];
+		return cancelButton;
 	} else {
 		[displayView.unitConversionDisplayView removeFromSuperview];
 		displayView.unitConversionDisplayView = nil;
@@ -65,8 +74,10 @@
 		UIImage *conversionImage = [UIImage calc_systemImageNamed:@"arrow.up.arrow.down"];
 		UIBarButtonItem *conversionButton = [[UIBarButtonItem alloc] initWithImage:conversionImage style:UIBarButtonItemStylePlain target:self action:@selector(_calculatorConverterButtonTapped)];
 		conversionButton.tintColor = [UIColor systemOrangeColor];
-		[displayView.navigationItem setRightBarButtonItem:conversionButton animated:NO];
+		return conversionButton;
 	}
+
+
 }
 
 %end
@@ -75,7 +86,7 @@
 
 - (void)longPress:(UILongPressGestureRecognizer *)gestureRecognizer {
 	DisplayView *displayView = ((DisplayViewController *)self).view;
-	if (!displayView.isUnitConversionMode) {
+	if (!displayView.isUnitConversionMode || displayView.unitConversionDisplayView.hidden) {
 		%orig;
 		return;
 	}
@@ -92,7 +103,7 @@
 
 - (void)doubleTap:(UITapGestureRecognizer *)gestureRecognizer {
 	DisplayView *displayView = ((DisplayViewController *)self).view;
-	if (!displayView.isUnitConversionMode) {
+	if (!displayView.isUnitConversionMode || displayView.unitConversionDisplayView.hidden) {
 		%orig;
 		return;
 	}
@@ -109,7 +120,7 @@
 
 - (void)copy:(id)sender {
 	DisplayView *displayView = ((DisplayViewController *)self).view;
-	if (!displayView.isUnitConversionMode) {
+	if (!displayView.isUnitConversionMode || displayView.unitConversionDisplayView.hidden) {
 		%orig;
 		return;
 	}
@@ -142,10 +153,10 @@
 	if (!displayView) return;
 	
 	if (size.width > size.height) {	// landscape
-		displayView.navigationBar.hidden = YES;
 		displayView.unitConversionDisplayView.hidden = YES;
+		[displayView.navigationItem setRightBarButtonItem:nil animated:YES];
 	} else {	// portrait
-		displayView.navigationBar.hidden = NO;
+		[displayView.navigationItem setRightBarButtonItem:[displayView rightBarButtonItem] animated:YES];
 		if (displayView.isUnitConversionMode) {
 			displayView.unitConversionDisplayView.hidden = NO;
 		}

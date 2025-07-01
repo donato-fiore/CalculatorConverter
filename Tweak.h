@@ -34,6 +34,7 @@
 @interface DisplayView (CalculatorHistory)
 @property (nonatomic, strong) UINavigationBar *navigationBar;
 @property (nonatomic, strong) UINavigationItem *navigationItem;
+- (UIBarButtonItem *)rightBarButtonItem;
 @end
 
 @interface DisplayView (CalculatorUnitConversion)
