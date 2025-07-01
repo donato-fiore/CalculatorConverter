@@ -163,6 +163,20 @@
 	}
 }
 
+%new
+- (void)updateConvertedValue {
+	DisplayView *displayView = ((DisplayViewController *)[self getSwiftIvar:@"displayController"]).view;
+	if (!displayView) return;
+
+	DisplayValue *displayValue = displayView.unitConversionDisplayView.activeUnitDisplayView.displayValue;
+	if (!displayValue) return;
+
+	CalculatorModel *model = [CCUnitDataProvider sharedInstance].calculatorModel;
+	if (!model) return;
+
+	[self calculatorModel:model didUpdateDisplayValue:displayValue shouldFlashDisplay:NO];
+}
+
 %end
 
 

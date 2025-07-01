@@ -236,8 +236,11 @@
 }
 
 - (void)updateConversionUI {
-    NSLog(@"Updating conversion UI");
-    [((DisplayView *)(((CalculatorController *)(self.presentingViewController)).accessibilityDisplayController.view)).unitConversionDisplayView updateButtonTitles];
+    CalculatorController *calculatorController = [[CCUnitDataProvider sharedInstance] calculatorController];
+    DisplayView *displayView = (DisplayView *)([calculatorController getSwiftIvar:@"displayController"].view);
+
+    [displayView.unitConversionDisplayView updateButtonTitles];
+    [calculatorController updateConvertedValue];
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {

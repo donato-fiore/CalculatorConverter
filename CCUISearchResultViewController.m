@@ -113,8 +113,7 @@
     return headerView;
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section;
-{
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (_searchText.length == 0) {
         return [CCUnitDataProvider sharedInstance].recentUnits.count;
     }

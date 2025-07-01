@@ -52,3 +52,7 @@
 @interface CalculatorNumberFormatter (CalculatorConverter)
 - (instancetype)initWithMaximumDigitCount:(NSUInteger)maximumDigitCount;
 @end
+
+@interface CalculatorController (CalculatorConverter)
+- (void)updateConvertedValue;
+@end
