@@ -90,6 +90,23 @@
 	}
 }
 
+- (void)doubleTap:(UITapGestureRecognizer *)gestureRecognizer {
+	DisplayView *displayView = ((DisplayViewController *)self).view;
+	if (!displayView.isUnitConversionMode) {
+		%orig;
+		return;
+	}
+
+	if (gestureRecognizer.state == UIGestureRecognizerStateEnded) {
+		[self becomeFirstResponder];
+
+		UIMenuController *menuController = [UIMenuController sharedMenuController];
+		UILabel *displayLabel = displayView.unitConversionDisplayView.activeUnitDisplayView.displayLabel;
+
+		[menuController showMenuFromView:displayLabel rect:[displayLabel effectiveTextBounds]];
+	}
+}
+
 - (void)copy:(id)sender {
 	DisplayView *displayView = ((DisplayViewController *)self).view;
 	if (!displayView.isUnitConversionMode) {
