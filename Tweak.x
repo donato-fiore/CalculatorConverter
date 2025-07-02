@@ -27,11 +27,7 @@
 		[self addSubview:displayView.navigationBar];
 	}
 
-	UIImage *conversionImage = [UIImage calc_systemImageNamed:@"arrow.up.arrow.down"];
-	UIBarButtonItem *conversionButton = [[UIBarButtonItem alloc] initWithImage:conversionImage style:UIBarButtonItemStylePlain target:self action:@selector(_calculatorConverterButtonTapped)];
-	conversionButton.tintColor = [UIColor systemOrangeColor];
-	[displayView.navigationItem setRightBarButtonItem:conversionButton animated:NO];
-
+	[displayView.navigationItem setRightBarButtonItem:[self rightBarButtonItem] animated:NO];
 	[CCUnitDataProvider sharedInstance];
 }
 
