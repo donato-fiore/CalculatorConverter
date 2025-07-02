@@ -1,5 +1,6 @@
 #import "CalculateUnitCollection.h"
 #import "CalculateUnit.h"
+#import "CCUnitDataProvider.h"
 
 @implementation CalculateUnitCollection
 
@@ -69,12 +70,20 @@
 }
 
 - (CalculateUnit *)defaultUnitForCategory:(NSInteger)categoryID excludingUnitID:(NSInteger)excludedUnitID {
-    NSLog(@"[CalculateUnitCollection] defaultUnitForCategory: %ld excludingUnitID: %ld", (long)categoryID, (long)excludedUnitID);
     CalculateUnitCategory *category = [self categoryForID:categoryID];
     if (!category) return nil;
     
+    NSArray *recentUnits = [CCUnitDataProvider sharedInstance].recentUnits;
+    for (CalculateUnit *unit in recentUnits) {
+        if (unit.unitID != excludedUnitID && unit.category.categoryID == categoryID) {
+            NSLog(@"[CalculateUnitCollection] Found recent unit: %@", unit.displayName);
+            return unit;
+        }
+    }
+
     for (CalculateUnit *unit in category.units) {
         if (unit.unitID != excludedUnitID) {
+            NSLog(@"[CalculateUnitCollection] Found default unit: %@", unit.displayName);
             return unit;
         }
     }
