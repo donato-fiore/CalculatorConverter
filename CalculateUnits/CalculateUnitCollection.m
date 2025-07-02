@@ -20,9 +20,6 @@
     [dictionary enumerateKeysAndObjectsUsingBlock:^(NSString *categoryName, NSDictionary *categoryInfo, BOOL *stop) {
         CalculateUnitCategory *category = [[CalculateUnitCategory alloc] initWithName:categoryName categoryInfo:categoryInfo];
         category.categoryID = categoryID++;
-
-        // NSLog(@"[CalculateUnitCollection] categoryName: %@", categoryName);
-        // NSLog(@"[CalculateUnitCollection] categoryInfo: %@", categoryInfo);
         
         [category.units enumerateObjectsUsingBlock:^(CalculateUnit *unit, NSUInteger idx, BOOL *stop) {
             unit.unitID = unitID++;

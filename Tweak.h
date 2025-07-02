@@ -4,6 +4,12 @@
 
 #import "CCConversionDisplayView.h"
 
+#ifdef DEBUG
+#define NSLog(...)                      NSLog(__VA_ARGS__);
+#else
+#define NSLog(...) {}
+#endif
+
 @interface UIView (Private)
 - (UIViewController *)_viewControllerForAncestor;
 @end

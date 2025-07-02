@@ -71,7 +71,7 @@
 - (void)changeActiveInputDisplayView:(UITapGestureRecognizer *)sender {
     DisplayViewController *displayVC = (DisplayViewController *)[self _viewControllerForAncestor];
     if (!displayVC) {
-        NSLog(@"Error: DisplayViewController not found in view hierarchy.");
+        NSLog(@"[CCUnitDisplayView] Error: DisplayViewController not found in view hierarchy.");
         return;
     }
 
