@@ -10,10 +10,6 @@
 #define NSLog(...) {}
 #endif
 
-@interface UIView (Private)
-- (UIViewController *)_viewControllerForAncestor;
-@end
-
 @interface DisplayValue : NSObject
 - (NSString *)accessibilityStringValue;
 @end
