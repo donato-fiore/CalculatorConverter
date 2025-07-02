@@ -220,8 +220,7 @@
     CCUnitDataProvider *provider = [CCUnitDataProvider sharedInstance];
     CalculateUnitCategory *selectedCategory = [provider categoryForID:provider.categoryID];
     CalculateUnit *unit = selectedCategory.units[indexPath.row];
-    [provider addRecentUnit:unit];
-
+    
     BOOL isInput = [self.stagedUnitType isEqualToString:@"editingInputUnit"];
     if (isInput) {
         [provider setInputUnitID:unit.unitID];

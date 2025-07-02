@@ -168,11 +168,15 @@
 
 
 - (void)setInputUnitID:(NSUInteger)inputUnitID {
+    [self addRecentUnitID:inputUnitID];
+
     [[NSUserDefaults standardUserDefaults] setInteger:inputUnitID forKey:@"Converter.InputUnitID"];
     [self _syncUnitsForChangedUnitID:inputUnitID isInput:YES];
 }
 
 - (void)setResultUnitID:(NSUInteger)resultUnitID {
+    [self addRecentUnitID:resultUnitID];
+
     [[NSUserDefaults standardUserDefaults] setInteger:resultUnitID forKey:@"Converter.ResultUnitID"];
     [self _syncUnitsForChangedUnitID:resultUnitID isInput:NO];
 }
@@ -207,6 +211,15 @@
     return _recentUnits;
 }
 
+- (void)addRecentUnitID:(NSUInteger)unitID {
+    CalculateUnit *unit = [self unitForID:unitID];
+    if (!unit) {
+        NSLog(@"[UnitConversionDataProvider] Attempted to add a recent unit with ID %lu, but it was not found.", (unsigned long)unitID);
+        return;
+    }
+
+    [self addRecentUnit:unit];
+}
 
 - (void)addRecentUnit:(CalculateUnit *)unit {
     if (!unit) {
