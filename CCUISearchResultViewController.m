@@ -113,6 +113,21 @@
     return headerView;
 }
 
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        if (_searchText.length == 0) {
+            [[CCUnitDataProvider sharedInstance] removeRecentUnitAtIndex:indexPath.row];
+        }
+        [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    }
+}
+
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (_searchText.length > 0) return NO;
+
+    return indexPath.row < [CCUnitDataProvider sharedInstance].recentUnits.count;
+}
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (_searchText.length == 0) {
         return [CCUnitDataProvider sharedInstance].recentUnits.count;

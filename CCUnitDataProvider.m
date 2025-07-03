@@ -245,6 +245,17 @@
     _recentUnits = [NSMutableArray array];
 }
 
+- (void)removeRecentUnitAtIndex:(NSUInteger)index {
+    if (index >= self.recentUnits.count) {
+        NSLog(@"[UnitConversionDataProvider] Attempted to remove recent unit at invalid index %lu.", (unsigned long)index);
+        return;
+    }
+
+    NSMutableArray *recentUnits = [self recentUnits];
+    [recentUnits removeObjectAtIndex:index];
+    [[NSUserDefaults standardUserDefaults] setObject:[recentUnits valueForKey:@"unitID"] forKey:@"Converter.RecentUnits"];
+}
+
 - (CalculateUnitCategory *)categoryForID:(NSInteger)categoryID {
     return [self.unitCollection categoryForID:categoryID];
 }

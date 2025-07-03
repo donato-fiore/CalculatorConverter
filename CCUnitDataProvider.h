@@ -28,6 +28,7 @@ typedef NS_ENUM(bool, CCUnitConversionDirection) {
 + (instancetype)sharedInstance;
 - (void)addRecentUnit:(CalculateUnit *)unit;
 - (void)clearRecentUnits;
+- (void)removeRecentUnitAtIndex:(NSUInteger)index;
 - (DisplayValue *)convertDisplayValue:(DisplayValue *)value direction:(CCUnitConversionDirection)direction;
 - (CalculateUnitCategory *)categoryForID:(NSInteger)categoryID;
 - (CalculateUnitCategory *)currencyCategory;
